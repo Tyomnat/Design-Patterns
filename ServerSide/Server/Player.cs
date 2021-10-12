@@ -8,6 +8,7 @@ namespace Server
     {
         public int Id { get; set; }
         private string username;
+
         private Socket socket;
         public int X { get; set; }
         public int Y { get; set; }
@@ -68,7 +69,7 @@ namespace Server
         {
             byte[] responseBuffer = new byte[1024];
             this.socket.Receive(responseBuffer);
-            return Encoding.ASCII.GetString(responseBuffer);
+            return Encoding.ASCII.GetString(responseBuffer).Split("\0")[0];
         }
 
         public void Update(Event gameEvent)
@@ -86,13 +87,12 @@ namespace Server
 
         }
 
-        private void HandlePlayerMoved(string data)
+        public void HandlePlayerMoved(string data)
         {
             //Receive change of direction
             //Might need to move to different place to stop from calling all observers
             //Perhaps pass ID to identify which player is changing direction?
-            string receivedData = "Up";
-            switch (receivedData)
+            switch (data)
             {
                 case "Up":
                     direction = Direction.Up;
@@ -107,11 +107,10 @@ namespace Server
                     direction = Direction.Left;
                     break;
             }
-            Console.WriteLine(username + " moved");
         }
         private void HandleMapUpdated(string data)
         {
-            SendMessage("map:" + data);
+            SendMessage("map_" + data);
         }
     }
 }

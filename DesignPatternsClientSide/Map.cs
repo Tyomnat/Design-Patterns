@@ -9,7 +9,6 @@ namespace DesignPatternsClientSide
         public int Width { get; set; }
         public int Height { get; set; }
 
-        //public int[][] Objects;
         public MapObject[][] Objects;
 
         public Map(int width, int height)

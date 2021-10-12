@@ -22,18 +22,24 @@ namespace Server
             int countX = 0;
             int countY = 0;
 
+            Random rand = new Random();
+
             for (int i = 0; i < width; i += 32)
             {
                 countY = 0;
                 MapObject[] objectArr = new MapObject[height / 32];
                 for (int j = 0; j < height; j += 32)
                 {
-                    objectArr[countY] = new MapObject(i + 16, j + 16);
+
+                    int objId = 0;
+                    objId = rand.Next(0, 10) == 1 ? 1 : 0;
+                    objectArr[countY] = new MapObject(i + 16, j + 16, objId, objId == 1);
                     countY++;
                 }
                 Objects[countX] = objectArr;
                 countX++;
             }
+            // Objects[8][8].Id = 1;
             //Objects = new int[height][];
 
             //for (int j = 0; j < height; j++)

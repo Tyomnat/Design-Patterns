@@ -21,12 +21,12 @@ namespace Server
             isSolid = false;
         }
 
-        public MapObject(int x, int y, int id)
+        public MapObject(int x, int y, int id, bool isSolid = false)
         {
             Id = id;
             X = x;
             Y = y;
-            isSolid = true;
+            this.isSolid = isSolid;
         }
 
     }

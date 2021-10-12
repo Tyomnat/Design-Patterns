@@ -10,12 +10,5 @@ namespace DesignPatternsClientSide
         public int Y { get; set; }
 
         public int Id { get; set; }
-
-        //public Player(int x, int y)
-        //{
-        //    X = x;
-        //    Y = y;
-        //}
-
     }
 }

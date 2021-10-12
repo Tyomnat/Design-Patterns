@@ -46,3 +46,5 @@ C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\S
 C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Debug\net5.0\ref\Server.dll
 C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Debug\net5.0\Server.pdb
 C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Debug\net5.0\Server.genruntimeconfig.cache
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\bin\Debug\net5.0\Newtonsoft.Json.dll
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Debug\net5.0\Server.csproj.CopyComplete
