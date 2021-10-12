@@ -20,9 +20,6 @@ namespace DesignPatternsClientSide
         static void Main()
         {
             Socket serverSocket = ConnectToServer(50);
-            Thread thread = new Thread(() => WorkThreadFunction(serverSocket));
-            thread.Start();
-
 
             //AsynchronousClient.StartClient();
 
@@ -34,11 +31,7 @@ namespace DesignPatternsClientSide
 
         }
 
-        static void WorkThreadFunction(Socket serverSocket)
-        {
 
-            StartCommunication(serverSocket);
-        }
 
 
         static Socket ConnectToServer(int port)
@@ -55,13 +48,15 @@ namespace DesignPatternsClientSide
 
                     if (serverSocket.Connected)
                     {
+                        byte[] commandBuffer = Encoding.ASCII.GetBytes("sdfsdf");
+                        serverSocket.Send(commandBuffer);
                         Console.WriteLine("Successfully connected to server!");
                         break;
                     }
                 }
                 catch (SocketException)
                 {
-                    Console.WriteLine("Failed to connect to server after " + attempts.ToString() + " attempts. :(");
+                    Console.WriteLine("Failed to connect to server after " + attempts.ToString() + " attempts.");
                     // Console.ReadKey();
                     // Environment.Exit(1);
                 }
@@ -70,32 +65,7 @@ namespace DesignPatternsClientSide
             return serverSocket;
         }
 
-        static void StartCommunication(Socket serverSocket)// serverSocket in form. spawn thread for receiving (then push message to list). send only when needed, not in while
-                                                           //or open 2 sockets - sender/receiver?
-        {
-            while (serverSocket.Connected)
-            {
-                // Receive a message from the server
-                byte[] messageBuffer = new byte[1024];
-                serverSocket.Receive(messageBuffer);
-                string message = Encoding.ASCII.GetString(messageBuffer);
 
-                if (message.Contains("cls"))
-                {
-                    Console.Clear();
-                }
-
-                Console.WriteLine(message);
-                // Process the server's message
-                if (message.Contains("action needed"))
-                {
-                    //Console.Write("> ");
-                    //string command = Console.ReadLine();
-                    byte[] commandBuffer = Encoding.ASCII.GetBytes("sdfsdf");
-                    serverSocket.Send(commandBuffer); // need try-catch, perhaps move to another 'SendCommand()' function
-                }
-            }
-        }
     }
 
     public class StateObject

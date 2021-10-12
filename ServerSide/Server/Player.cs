@@ -4,15 +4,23 @@ using System.Text;
 
 namespace Server
 {
-    class Player
+    class Player : IObserver
     {
+        public int Id { get; set; }
         private string username;
         private Socket socket;
+        public int X { get; set; }
+        public int Y { get; set; }
 
-        public Player(string username, Socket socket)
+        public Player(int id, string username, Socket socket, Map map)
         {
+            Id = id;
             this.username = username;
             this.socket = socket;
+            Random rnd = new Random();
+            X = rnd.Next(0, map.Objects.GetLength(0));
+            Y = rnd.Next(0, map.Objects[X].Length);
+            map.Objects[X][Y].Id = id;
         }
 
         public string GetUsername()
@@ -27,7 +35,11 @@ namespace Server
 
         public void SendMessage(string message)
         {
-            this.socket.Send(Encoding.ASCII.GetBytes(message));
+            byte[] bytes = new byte[10000];
+            bytes = Encoding.ASCII.GetBytes(message);
+            //Console.WriteLine(Encoding.ASCII.GetString(bytes));
+            //Console.ReadLine();
+            this.socket.Send(bytes);
         }
 
         public string ReceiveMessage()
@@ -35,6 +47,29 @@ namespace Server
             byte[] responseBuffer = new byte[1024];
             this.socket.Receive(responseBuffer);
             return Encoding.ASCII.GetString(responseBuffer);
+        }
+
+        public void Update(Event gameEvent)
+        {
+            if (gameEvent.Type == "player_moved")
+            {
+                HandlePlayerMoved(gameEvent.Data);
+            }
+            if (gameEvent.Type == "map_updated")
+            {
+                HandleMapUpdated(gameEvent.Data);
+            }
+
+
+        }
+
+        private void HandlePlayerMoved(string data)
+        {
+            Console.WriteLine(username + " moved");
+        }
+        private void HandleMapUpdated(string data)
+        {
+            SendMessage("map:" + data);
         }
     }
 }

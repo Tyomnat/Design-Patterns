@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace DesignPatternsClientSide
 {
@@ -23,7 +24,8 @@ namespace DesignPatternsClientSide
         private int _y;
         private Position _objPosition;
         private Socket socket;
-
+        private static Player player = new Player();
+        private static int[][] Map;
         //private Button btnAdd = new Button();
         //private List<PictureBox> walls = new List<PictureBox>();
 
@@ -31,16 +33,82 @@ namespace DesignPatternsClientSide
         {
             this.socket = socket;
             InitializeComponent();
-
-            _x = 50;
-            _y = 50;
+            Random rnd = new Random();
+            _x = rnd.Next(150, 300);
+            _y = rnd.Next(0, 150);
             _objPosition = Position.Down;
 
+            StartCommunication();
         }
 
+        private void StartCommunication()
+        {
+            Thread thread = new Thread(() => WorkThreadFunction(socket));
+            thread.Start();
+        }
+
+        static void Communicate(Socket serverSocket)// serverSocket in form. spawn thread for receiving (then push message to list). send only when needed, not in while                                                         //or open 2 sockets - sender/receiver?
+        {
+            while (serverSocket.Connected)
+            {
+                // Receive a message from the server
+                byte[] messageBuffer = new byte[100000];
+                serverSocket.Receive(messageBuffer);
+                string message = Encoding.ASCII.GetString(messageBuffer);
+
+
+                Console.WriteLine(message);
+                // Process the server's message
+                if (message.Contains("action needed"))
+                {
+                    //Console.Write("> ");
+                    //string command = Console.ReadLine();
+                    byte[] commandBuffer = Encoding.ASCII.GetBytes("sdfsdf");
+                    serverSocket.Send(commandBuffer); // need try-catch, perhaps move to another 'SendCommand()' function
+                }
+                if (message.Contains("map"))
+                {
+                    string json = message.Split(":")[1].Split("\0")[0];
+                    dynamic d = JsonConvert.DeserializeObject(json);
+                    Map map = new Map();
+                    foreach (var item in d)
+                    {
+                        MapObject mapObject = new MapObject(item.Id, item.X, item.Y);//create classes
+                    }
+                }
+                if (message.Contains("id"))
+                {
+                    player.Id = int.Parse(message.Split(":")[1]);
+                }
+            }
+        }
+
+        static void WorkThreadFunction(Socket serverSocket)
+        {
+
+            Communicate(serverSocket);
+        }
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.FillEllipse(Brushes.BlueViolet, _x, _y, 30, 30);
+            //e.Graphics.FillEllipse(Brushes.BlueViolet, _x, _y, 30, 30);
+
+            if (Map != null)
+            {
+                for (int i = 0; i < Map.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Map[i].Length; j++)
+                    {
+                        if (Map[i][j] == player.Id)
+                        {
+                            e.Graphics.FillEllipse(Brushes.BlueViolet, i, j, 30, 30);
+                        }
+                        else if (Map[i][j] != 0)
+                        {
+                            e.Graphics.FillRectangle(Brushes.Black, i, j, 30, 30);
+                        }
+                    }
+                }
+            }
             //e.Graphics.DrawImage(new Bitmap("mushroom.png"), _x, _y, 64, 64);
         }
 
@@ -93,24 +161,25 @@ namespace DesignPatternsClientSide
 
         private void tmrMoving_Tick_1(object sender, EventArgs e)
         {
+
             if (_objPosition == Position.Right)
             {
-                _x += 10;
+                //_x += 10;
                 sendMessage("right");
             }
             else if (_objPosition == Position.Left)
             {
-                _x -= 10;
+                /// _x -= 10;
                 sendMessage("left");
             }
             else if (_objPosition == Position.Up)
             {
-                _y -= 10;
+                // _y -= 10;
                 sendMessage("up");
             }
             else if (_objPosition == Position.Down)
             {
-                _y += 10;
+                //_y += 10;
                 sendMessage("down");
             }
 

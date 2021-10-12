@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Server\\Server.csproj": {}
+    "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\Server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Server\\Server.csproj": {
+    "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Server\\Server.csproj",
+        "projectUniqueName": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\Server.csproj",
         "projectName": "Server",
-        "projectPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Server\\Server.csproj",
+        "projectPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\Server.csproj",
         "packagesPath": "C:\\Users\\zilcep1\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Server\\obj\\",
+        "outputPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -42,6 +42,12 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
+          "dependencies": {
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

@@ -5,15 +5,18 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Server
 {
     class Program
     {
+        private static List<int> playerIds = new List<int>();
         private static Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         //public static Socket clientSocketGlobal = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
+        private static Subject Subject = new Subject();
         private static List<Player> players = new List<Player>();
+        private static Map map = new Map(512, 512);
 
         static void Main(string[] args)
         {
@@ -61,20 +64,46 @@ namespace Server
             clientSocket.Receive(responseBuffer);
             string username = (players.Count + 1).ToString();
             Console.WriteLine("player connected: " + username);
-            players.Add(new Player(username, clientSocket));
-
+            int id = GeneratePlayerId();
+            Player newPlayer = new Player(id, username, clientSocket, map);
+            players.Add(newPlayer);
+            Subject.Register(newPlayer);
         }
+
+        private static int GeneratePlayerId()
+        {
+            Random rnd = new Random();
+            int randInt = 100;
+            while (playerIds.Contains(randInt))
+            {
+                randInt = rnd.Next(101, 200);
+            }
+            playerIds.Add(randInt);
+
+            return randInt;
+        }
+
 
         private static void ReceiveMessage(Player player)
         {
+            if (player.GetSocket().Connected)
+            {
+                byte[] bytes = Encoding.ASCII.GetBytes("id:" + player.Id.ToString());
+                player.GetSocket().Send(bytes);
 
+            }
             while (player.GetSocket().Connected)
             {
                 byte[] messageBuffer = new byte[1024];
                 player.GetSocket().Receive(messageBuffer);
                 string message = Encoding.ASCII.GetString(messageBuffer);
-                Console.WriteLine(player.GetUsername() + "_" + message);
-
+                //Console.WriteLine(player.GetUsername() + "_" + message);
+                //Event gameEvent = new Event("player_moved", "sdsd");
+                //Subject.Update(gameEvent);
+                //Console.WriteLine(JsonSerializer.Serialize(map.Objects));
+                //Console.ReadLine();
+                Event gameEvent = new Event("map_updated", JsonSerializer.Serialize(map.Objects));
+                Subject.Update(gameEvent);
 
             }
         }
