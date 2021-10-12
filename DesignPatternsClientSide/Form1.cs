@@ -25,7 +25,8 @@ namespace DesignPatternsClientSide
         private Position _objPosition;
         private Socket socket;
         private static Player player = new Player();
-        private static int[][] Map;
+        //private static int[][] Map;
+        private static Map Map;
         //private Button btnAdd = new Button();
         //private List<PictureBox> walls = new List<PictureBox>();
 
@@ -70,11 +71,14 @@ namespace DesignPatternsClientSide
                 {
                     string json = message.Split(":")[1].Split("\0")[0];
                     dynamic d = JsonConvert.DeserializeObject(json);
-                    Map map = new Map();
+                    Map map = new Map();// NEED TO PASS WIDTH AND HEIGHT, PARSE THOSE FIRST
                     foreach (var item in d)
                     {
                         MapObject mapObject = new MapObject(item.Id, item.X, item.Y);//create classes
+                        //double loop to save each row, column?
                     }
+                    // Assign local map to Global map
+                    Map = map;
                 }
                 if (message.Contains("id"))
                 {
@@ -85,7 +89,6 @@ namespace DesignPatternsClientSide
 
         static void WorkThreadFunction(Socket serverSocket)
         {
-
             Communicate(serverSocket);
         }
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -94,17 +97,38 @@ namespace DesignPatternsClientSide
 
             if (Map != null)
             {
-                for (int i = 0; i < Map.GetLength(0); i++)
+                //for (int i = 0; i < Map.GetLength(0); i++)
+                //{
+                //    for (int j = 0; j < Map[i].Length; j++)
+                //    {
+                //        if (Map[i][j] == player.Id)
+                //        {
+                //            e.Graphics.FillEllipse(Brushes.BlueViolet, i, j, 30, 30);
+                //        }
+                //        else if (Map[i][j] != 0)
+                //        {
+                //            e.Graphics.FillRectangle(Brushes.Black, i, j, 30, 30);
+                //        }
+                //    }
+                //}
+                for (int i = 0; i < Map.Objects.GetLength(0); i++)
                 {
-                    for (int j = 0; j < Map[i].Length; j++)
+                    for (int j = 0; j < Map.Objects[i].Length; j++)
                     {
-                        if (Map[i][j] == player.Id)
+                        if (Map.Objects[i][j].Id == player.Id) // Current client player
                         {
-                            e.Graphics.FillEllipse(Brushes.BlueViolet, i, j, 30, 30);
+                            e.Graphics.FillEllipse(Brushes.BlueViolet, Map.Objects[i][j].X, Map.Objects[i][j].Y, 32, 32);
                         }
-                        else if (Map[i][j] != 0)
+                        else if (Map.Objects[i][j].Id > 100 && Map.Objects[i][j].Id < 200) // Other client players
                         {
-                            e.Graphics.FillRectangle(Brushes.Black, i, j, 30, 30);
+                            e.Graphics.FillEllipse(Brushes.Red, Map.Objects[i][j].X, Map.Objects[i][j].Y, 32, 32);
+                        }
+                        else if (Map.Objects[i][j].Id == 1) // Wall
+                        {
+                            // Since drawn from upper left corner, need to calculate coordinates
+                            int x = Map.Objects[i][j].X - 16;
+                            int y = Map.Objects[i][j].Y - 16;
+                            e.Graphics.FillRectangle(Brushes.Black, x, y, 32, 32);
                         }
                     }
                 }
@@ -112,9 +136,9 @@ namespace DesignPatternsClientSide
             //e.Graphics.DrawImage(new Bitmap("mushroom.png"), _x, _y, 64, 64);
         }
 
-
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            // Send direction change on keydown is more optimal
             if (e.KeyCode == Keys.Left)
             {
                 _objPosition = Position.Left;
@@ -161,7 +185,7 @@ namespace DesignPatternsClientSide
 
         private void tmrMoving_Tick_1(object sender, EventArgs e)
         {
-
+            // remove timer
             if (_objPosition == Position.Right)
             {
                 //_x += 10;

@@ -30,6 +30,7 @@ namespace Server
 
         public void Update(Event gameEvent)
         {
+            // Perhaps start async to somewhat synchronize data update?
             foreach (var item in observers)
             {
                 item.Update(gameEvent);

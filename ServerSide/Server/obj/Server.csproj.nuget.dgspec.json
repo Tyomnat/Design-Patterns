@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\Server.csproj": {}
+    "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\ServerSide\\Server\\Server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\Server.csproj": {
+    "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\ServerSide\\Server\\Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\Server.csproj",
+        "projectUniqueName": "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\ServerSide\\Server\\Server.csproj",
         "projectName": "Server",
-        "projectPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\Server.csproj",
-        "packagesPath": "C:\\Users\\zilcep1\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\ServerSide\\Server\\obj\\",
+        "projectPath": "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\ServerSide\\Server\\Server.csproj",
+        "packagesPath": "C:\\Users\\Tomas\\.nuget\\packages\\",
+        "outputPath": "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\ServerSide\\Server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "c:\\program files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\zilcep1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Tomas\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -63,7 +63,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\5.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -102,10 +102,62 @@ namespace Server
                 //Subject.Update(gameEvent);
                 //Console.WriteLine(JsonSerializer.Serialize(map.Objects));
                 //Console.ReadLine();
+
+                //Function to run update to all map elements
+                UpdateMap();
                 Event gameEvent = new Event("map_updated", JsonSerializer.Serialize(map.Objects));
                 Subject.Update(gameEvent);
 
             }
+        }
+
+        private static void UpdateMap()
+        {
+            for (int i = 0; i < map.Objects.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.Objects[i].Length; j++)
+                {
+                    if (map.Objects[i][j].Id > 100 && map.Objects[i][j].Id < 200) // Players
+                    {
+                        HandlePlayerMovement(map.Objects[i][j].Id, i, j);
+                    }
+                    // AIs ?
+                }
+            }
+        }
+
+        private static void HandlePlayerMovement(int id, int x, int y)
+        {
+            Player player = players.Find(P => P.Id == id);
+            string dir = player.GetDirection();
+            int newX = x, newY = y;
+            switch (dir)
+            {
+                case "Up":
+                    newY--;
+                    break;
+                case "Right":
+                    newX++;
+                    break;
+                case "Down":
+                    newY--;
+                    break;
+                case "Left":
+                    newX--;
+                    break;
+            }
+            // Process overboundaries
+            if (newX < 0 || newX > map.Objects.GetLength(0) || newY < 0 || newY > map.Objects[x].Length)
+                return; // Player does not move, because move goes over boundaries
+
+            // Process obstacles
+            if (map.Objects[newX][newY].isSolid == true)
+                return; // Player does not move, because target location is inpassable
+
+            // Move to new location
+            map.Objects[newX][newY] = new MapObject(map.Objects[x][y].X, map.Objects[x][y].Y, map.Objects[x][y].Id);
+            // Remove old location
+            map.Objects[x][y] = new MapObject(map.Objects[x][y].X, map.Objects[x][y].Y);
         }
     }
 }
