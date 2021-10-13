@@ -1,7 +1,7 @@
 ﻿
 namespace DesignPatternsClientSide
 {
-    partial class Form1
+    partial class GameForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -37,11 +37,11 @@ namespace DesignPatternsClientSide
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(544, 544);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.Name = "GameForm";
+            this.Text = "GameForm";
+            this.Load += new System.EventHandler(this.GameForm_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.GameForm_Paint);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GameForm_KeyDown);
             this.ResumeLayout(false);
 
         }

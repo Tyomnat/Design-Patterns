@@ -13,56 +13,60 @@ using Newtonsoft.Json;
 
 namespace DesignPatternsClientSide
 {
-    public partial class Form1 : Form
+    /// <summary>
+    /// Main game form, that displays the actual gameplay
+    /// </summary>
+    public partial class GameForm : Form
     {
-        enum Position
-        {
-            Left, Right, Up, Down
-        }
-
         private Socket socket;
         private static Player player = new Player();
         private static Map Map;
 
-        public Form1(Socket socket)
+        public GameForm(Socket socket)
         {
             this.socket = socket;
-            InitializeComponent();
-            DoubleBuffered = true;
-            StartCommunication(this);
+            InitializeComponent(); // Default form initialization method
+            DoubleBuffered = true; // Making form not flicker due to rapid repainting
+            StartCommunication(this); // Start communication thread
         }
 
-        private void StartCommunication(Form1 frm)
+        private void StartCommunication(GameForm frm)
         {
-            Thread thread = new Thread(() => WorkThreadFunction(socket, frm));
+            Thread thread = new Thread(() => Communicate(socket, frm));
             thread.Start();
         }
 
-        static void Communicate(Socket serverSocket, Form1 frm)
+        static void Communicate(Socket serverSocket, GameForm frm)
         {
             while (serverSocket.Connected)
             {
+                // Receive message
                 byte[] messageBuffer = new byte[100000];
                 serverSocket.Receive(messageBuffer);
                 string message = Encoding.ASCII.GetString(messageBuffer);
 
+                // Start of message will contain socket intended information
+                // Map update socket
                 if (message.Contains("map"))
                 {
+                    // Don't ask
                     string json = message.Split("_")[1].Split("\0")[0].Replace("map", "");
                     dynamic d = JsonConvert.DeserializeObject(json);
 
+                    // New map object
                     Map map = new Map(int.Parse((string)d.Width), int.Parse((string)d.Height));
                     int j = 0;
-                    foreach (var mapObjectsArr in d.Objects)
+                    foreach (var mapObjectsArr in d.Objects) // X loop
                     {
                         MapObject[] newMapObjectsArr = new MapObject[map.Height / 32];
                         int i = 0;
-                        foreach (var mapObjectParsed in mapObjectsArr)
+                        foreach (var mapObjectParsed in mapObjectsArr) // Y loop
                         {
-                            MapObject mapObject = new MapObject(int.Parse((string)mapObjectParsed.X), int.Parse((string)mapObjectParsed.Y), int.Parse((string)mapObjectParsed.Id));
+                            MapObject mapObject = new MapObject(int.Parse((string)mapObjectParsed.X),
+                                                                int.Parse((string)mapObjectParsed.Y),
+                                                                int.Parse((string)mapObjectParsed.Id));
                             newMapObjectsArr[i] = mapObject;
                             i++;
-
                         }
                         map.Objects[j] = newMapObjectsArr;
                         j++;
@@ -70,6 +74,7 @@ namespace DesignPatternsClientSide
                     // Assign local map to Global map
                     Map = map;
                 }
+                // Receiving server assigned current client player ID
                 else if (message.Contains("id"))
                 {
                     player.Id = int.Parse(message.Split(":")[1]);
@@ -77,18 +82,19 @@ namespace DesignPatternsClientSide
             }
         }
 
-        static void WorkThreadFunction(Socket serverSocket, Form1 frm)
+        /// <summary>
+        /// Default Form paint method
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GameForm_Paint(object sender, PaintEventArgs e)
         {
-            Communicate(serverSocket, frm);
-        }
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-
+            // If we have the map
             if (Map != null)
             {
-                for (int i = 0; i < Map.Objects.GetLength(0); i++)
+                for (int i = 0; i < Map.Objects.GetLength(0); i++) // X loop
                 {
-                    for (int j = 0; j < Map.Objects[i].Length; j++)
+                    for (int j = 0; j < Map.Objects[i].Length; j++) // Y loop
                     {
                         if (Map.Objects[i][j].Id == player.Id) // Current client player
                         {
@@ -107,9 +113,14 @@ namespace DesignPatternsClientSide
             }
         }
 
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        /// <summary>
+        /// Default form keydown method
+        /// We send intended movement direction to the server once a keydown is registered
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GameForm_KeyDown(object sender, KeyEventArgs e)
         {
-            // Send direction change on keydown is more optimal
             if (e.KeyCode == Keys.Left)
             {
                 sendMessage("Left");
@@ -121,30 +132,41 @@ namespace DesignPatternsClientSide
             else if (e.KeyCode == Keys.Up)
             {
                 sendMessage("Up");
-
             }
             else if (e.KeyCode == Keys.Down)
             {
                 sendMessage("Down");
-
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        /// <summary>
+        /// Default Form Load method
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GameForm_Load(object sender, EventArgs e)
         {
 
         }
 
+        /// <summary>
+        /// Timer calling form redraw
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tmrMoving_Tick_1(object sender, EventArgs e)
         {
             Invalidate();
         }
 
+        /// <summary>
+        /// Send information to server
+        /// </summary>
+        /// <param name="message"></param>
         private void sendMessage(string message)
         {
             byte[] commandBuffer = Encoding.ASCII.GetBytes(message);
             this.socket.Send(commandBuffer);
-
         }
     }
 }

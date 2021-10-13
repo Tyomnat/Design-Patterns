@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    /// <summary>
+    /// Observer Design Patter Subject Interface
+    /// </summary>
     interface ISubject
     {
         public void Update(Event gameEvent);

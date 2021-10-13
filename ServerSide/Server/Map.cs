@@ -10,8 +10,6 @@ namespace Server
     {
         public int Width { get; set; }
         public int Height { get; set; }
-
-        //public int[][] Objects;
         public MapObject[][] Objects;
 
         public Map(int width, int height)
@@ -19,41 +17,38 @@ namespace Server
             Width = width;
             Height = height;
             Objects = new MapObject[width / 32][];
+            Objects = GenerateMap(width, height, Objects);
+        }
+
+        /// <summary>
+        /// Temporary map generation solution
+        /// </summary>
+        /// <param name="width">Map Width (px)</param>
+        /// <param name="height">Map Height (px)</param>
+        /// <param name="Objects">Map object jagged array</param>
+        /// <returns>Returns generated Map Object array (aka the map)</returns>
+        private MapObject[][] GenerateMap(int width, int height, MapObject[][] Objects)
+        {
             int countX = 0;
-            int countY = 0;
 
             Random rand = new Random();
 
             for (int i = 0; i < width; i += 32)
             {
-                countY = 0;
+                int countY = 0;
                 MapObject[] objectArr = new MapObject[height / 32];
                 for (int j = 0; j < height; j += 32)
                 {
-
-                    int objId = 0;
-                    objId = rand.Next(0, 10) == 1 ? 1 : 0;
+                    // Determine if wall or not
+                    int objId = rand.Next(0, 10) == 1 ? 1 : 0;
                     objectArr[countY] = new MapObject(i + 16, j + 16, objId, objId == 1);
                     countY++;
                 }
                 Objects[countX] = objectArr;
                 countX++;
             }
-            // Objects[8][8].Id = 1;
-            //Objects = new int[height][];
 
-            //for (int j = 0; j < height; j++)
-            //{
-            //    int[] arr = new int[width];
-            //    for (int i = 0; i < width; i++)
-            //    {
-            //        arr[i] = 0;
-            //    }
-            //    Objects[j] = arr;
-            //}
-
-            //GenerateMap();
+            return Objects;
         }
-
     }
 }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    /// <summary>
+    /// Observer Design Patter Subject Class
+    /// </summary>
     class Subject : ISubject
     {
         private List<IObserver> observers = new List<IObserver>();
@@ -15,7 +18,6 @@ namespace Server
             if (!observers.Contains(observer))
             {
                 observers.Add(observer);
-
             }
             else
             {
@@ -30,7 +32,6 @@ namespace Server
 
         public void Update(Event gameEvent)
         {
-            // Perhaps start async to somewhat synchronize data update?
             foreach (var item in observers)
             {
                 item.Update(gameEvent);

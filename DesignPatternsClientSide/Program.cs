@@ -20,7 +20,7 @@ namespace DesignPatternsClientSide
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1(serverSocket));
+            Application.Run(new GameForm(serverSocket));
         }
 
         static Socket ConnectToServer(int port)

@@ -632,23 +632,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\zilcep1\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\Tomas\\.nuget\\packages\\": {},
+    "c:\\program files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\DesignPatternsClientSide\\DesignPatternsClientSide.csproj",
+      "projectUniqueName": "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\DesignPatternsClientSide\\DesignPatternsClientSide.csproj",
       "projectName": "DesignPatternsClientSide",
-      "projectPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\DesignPatternsClientSide\\DesignPatternsClientSide.csproj",
-      "packagesPath": "C:\\Users\\zilcep1\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\DesignPatternsClientSide\\obj\\",
+      "projectPath": "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\DesignPatternsClientSide\\DesignPatternsClientSide.csproj",
+      "packagesPath": "C:\\Users\\Tomas\\.nuget\\packages\\",
+      "outputPath": "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\DesignPatternsClientSide\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "c:\\program files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\zilcep1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Tomas\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -693,16 +693,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[3.1.0, 3.1.0]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[3.1.0, 3.1.0]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -711,7 +701,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\5.0.401\\RuntimeIdentifierGraph.json"
       }
     }
   }

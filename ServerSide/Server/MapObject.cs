@@ -28,6 +28,5 @@ namespace Server
             Y = y;
             this.isSolid = isSolid;
         }
-
     }
 }
