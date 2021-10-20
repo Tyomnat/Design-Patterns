@@ -1,0 +1,7 @@
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Release\net5.0\PubTmp\Out\app_data\Jobs\Triggered\Server\Settings.job
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Release\net5.0\PubTmp\Out\app_data\Jobs\Triggered\Server\Server.exe
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Release\net5.0\PubTmp\Out\app_data\Jobs\Triggered\Server\Server.dll
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Release\net5.0\PubTmp\Out\app_data\Jobs\Triggered\Server\Server.deps.json
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Release\net5.0\PubTmp\Out\app_data\Jobs\Triggered\Server\Server.runtimeconfig.json
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Release\net5.0\PubTmp\Out\app_data\Jobs\Triggered\Server\Server.pdb
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\ServerSide\Server\obj\Release\net5.0\PubTmp\Out\app_data\Jobs\Triggered\Server\Newtonsoft.Json.dll

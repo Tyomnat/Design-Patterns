@@ -2,10 +2,10 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "Microsoft.AspNetCore.Connections.Abstractions/5.0.10": {
+      "Microsoft.AspNetCore.Connections.Abstractions/5.0.11": {
         "type": "package",
         "dependencies": {
-          "Microsoft.AspNetCore.Http.Features": "5.0.10"
+          "Microsoft.AspNetCore.Http.Features": "5.0.11"
         },
         "compile": {
           "lib/netstandard2.1/Microsoft.AspNetCore.Connections.Abstractions.dll": {}
@@ -14,7 +14,7 @@
           "lib/netstandard2.1/Microsoft.AspNetCore.Connections.Abstractions.dll": {}
         }
       },
-      "Microsoft.AspNetCore.Http.Features/5.0.10": {
+      "Microsoft.AspNetCore.Http.Features/5.0.11": {
         "type": "package",
         "dependencies": {
           "Microsoft.Extensions.Primitives": "5.0.1",
@@ -210,10 +210,10 @@
     }
   },
   "libraries": {
-    "Microsoft.AspNetCore.Connections.Abstractions/5.0.10": {
-      "sha512": "M+CLowHTCFHaQhM4F7OEwpg45JCSaAI2P4AlhRbcJMs6ydq6Vhn/5+bcBzWa91EErkijlCpLIQ2iw4u/00C0cw==",
+    "Microsoft.AspNetCore.Connections.Abstractions/5.0.11": {
+      "sha512": "1HHxtG4bPHaMM+l3/REVAwqUk0ntO/+DSlTs3iLfx+vKa42oyYdeEq37Bk5zpVCiONF2yBbL/24+Xo/CPD+zmQ==",
       "type": "package",
-      "path": "microsoft.aspnetcore.connections.abstractions/5.0.10",
+      "path": "microsoft.aspnetcore.connections.abstractions/5.0.11",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -227,14 +227,14 @@
         "lib/netstandard2.0/Microsoft.AspNetCore.Connections.Abstractions.xml",
         "lib/netstandard2.1/Microsoft.AspNetCore.Connections.Abstractions.dll",
         "lib/netstandard2.1/Microsoft.AspNetCore.Connections.Abstractions.xml",
-        "microsoft.aspnetcore.connections.abstractions.5.0.10.nupkg.sha512",
+        "microsoft.aspnetcore.connections.abstractions.5.0.11.nupkg.sha512",
         "microsoft.aspnetcore.connections.abstractions.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.Http.Features/5.0.10": {
-      "sha512": "IWs6dC9OqkREOs8SLs59MZ0I5CHnWrwuZ5yuIMLL8Qr3I3hJNNUzbxU5fgI1BwPddyobgajVlpc3VmgscrHecA==",
+    "Microsoft.AspNetCore.Http.Features/5.0.11": {
+      "sha512": "mE+xQE7nl91KjV3XffmZLN9aC4VwZWg/8inPvBXiZXlZhJrTb3uCqLmFRmzfmtAV3lS8n3Kd8yeKBKlyqqzcjw==",
       "type": "package",
-      "path": "microsoft.aspnetcore.http.features/5.0.10",
+      "path": "microsoft.aspnetcore.http.features/5.0.11",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -246,7 +246,7 @@
         "lib/net5.0/Microsoft.AspNetCore.Http.Features.xml",
         "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll",
         "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.xml",
-        "microsoft.aspnetcore.http.features.5.0.10.nupkg.sha512",
+        "microsoft.aspnetcore.http.features.5.0.11.nupkg.sha512",
         "microsoft.aspnetcore.http.features.nuspec"
       ]
     },
@@ -627,28 +627,29 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "Microsoft.AspNetCore.Connections.Abstractions >= 5.0.11",
       "Microsoft.AspNetCore.SignalR.Client.Core >= 5.0.10",
       "Newtonsoft.Json >= 13.0.1"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Tomas\\.nuget\\packages\\": {},
-    "c:\\program files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\zilcep1\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\DesignPatternsClientSide\\DesignPatternsClientSide.csproj",
+      "projectUniqueName": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\DesignPatternsClientSide\\DesignPatternsClientSide.csproj",
       "projectName": "DesignPatternsClientSide",
-      "projectPath": "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\DesignPatternsClientSide\\DesignPatternsClientSide.csproj",
-      "packagesPath": "C:\\Users\\Tomas\\.nuget\\packages\\",
-      "outputPath": "E:\\KTU\\7-Semestras\\OPP\\Design-Patterns\\DesignPatternsClientSide\\obj\\",
+      "projectPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\DesignPatternsClientSide\\DesignPatternsClientSide.csproj",
+      "packagesPath": "C:\\Users\\zilcep1\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\zilcep1\\Documents\\DesignPatternsServerSide\\Design-Patterns\\DesignPatternsClientSide\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "c:\\program files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Tomas\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\zilcep1\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -674,6 +675,10 @@
       "netcoreapp3.1": {
         "targetAlias": "netcoreapp3.1",
         "dependencies": {
+          "Microsoft.AspNetCore.Connections.Abstractions": {
+            "target": "Package",
+            "version": "[5.0.11, )"
+          },
           "Microsoft.AspNetCore.SignalR.Client.Core": {
             "target": "Package",
             "version": "[5.0.10, )"
@@ -693,6 +698,16 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -701,7 +716,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\5.0.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
       }
     }
   }

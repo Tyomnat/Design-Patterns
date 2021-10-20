@@ -8,7 +8,9 @@ namespace Server
     {
         public int Id { get; set; }
         private string username;
-
+        private bool isAlive;
+        private int lives;
+        public String color;
         private Socket socket;
         public int X { get; set; }
         public int Y { get; set; }
