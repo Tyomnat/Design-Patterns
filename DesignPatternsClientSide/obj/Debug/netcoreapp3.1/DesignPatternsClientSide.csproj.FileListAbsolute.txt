@@ -56,7 +56,6 @@ C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\DesignPatter
 C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\DesignPatternsClientSide\bin\Debug\netcoreapp3.1\System.Text.Json.dll
 C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\DesignPatternsClientSide\bin\Debug\netcoreapp3.1\System.Threading.Channels.dll
 C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcoreapp3.1\DesignPatternsClientSide.csprojAssemblyReference.cache
-C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcoreapp3.1\DesignPatternsClientSide.Form1.resources
 C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcoreapp3.1\DesignPatternsClientSide.csproj.GenerateResource.cache
 C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcoreapp3.1\DesignPatternsClientSide.AssemblyInfoInputs.cache
 C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcoreapp3.1\DesignPatternsClientSide.AssemblyInfo.cs
@@ -100,3 +99,4 @@ E:\KTU\7-Semestras\OPP\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcor
 E:\KTU\7-Semestras\OPP\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcoreapp3.1\DesignPatternsClientSide.pdb
 E:\KTU\7-Semestras\OPP\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcoreapp3.1\DesignPatternsClientSide.genruntimeconfig.cache
 E:\KTU\7-Semestras\OPP\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcoreapp3.1\DesignPatternsClientSide.GameForm.resources
+C:\Users\zilcep1\Documents\DesignPatternsServerSide\Design-Patterns\DesignPatternsClientSide\obj\Debug\netcoreapp3.1\DesignPatternsClientSide.GameForm.resources

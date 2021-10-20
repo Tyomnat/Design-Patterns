@@ -32,11 +32,18 @@ namespace DesignPatternsClientSide
             this.components = new System.ComponentModel.Container();
             this.tmrMoving = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
+            // 
+            // tmrMoving
+            // 
             this.tmrMoving.Enabled = true;
             this.tmrMoving.Tick += new System.EventHandler(this.tmrMoving_Tick_1);
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            // 
+            // GameForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(544, 544);
+            this.ClientSize = new System.Drawing.Size(542, 536);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "GameForm";
             this.Text = "GameForm";
             this.Load += new System.EventHandler(this.GameForm_Load);

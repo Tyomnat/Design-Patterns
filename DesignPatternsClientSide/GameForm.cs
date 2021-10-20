@@ -26,17 +26,19 @@ namespace DesignPatternsClientSide
         {
             this.socket = socket;
             InitializeComponent(); // Default form initialization method
+            //this.Size = new Size();
+            this.ClientSize = new Size(544, 544);
             DoubleBuffered = true; // Making form not flicker due to rapid repainting
-            StartCommunication(this); // Start communication thread
+            StartCommunication(); // Start communication thread
         }
 
-        private void StartCommunication(GameForm frm)
+        private void StartCommunication()
         {
-            Thread thread = new Thread(() => Communicate(socket, frm));
+            Thread thread = new Thread(() => Communicate(socket));
             thread.Start();
         }
 
-        static void Communicate(Socket serverSocket, GameForm frm)
+        static void Communicate(Socket serverSocket)
         {
             while (serverSocket.Connected)
             {
@@ -108,6 +110,22 @@ namespace DesignPatternsClientSide
                         {
                             e.Graphics.FillRectangle(Brushes.Black, Map.Objects[i][j].X, Map.Objects[i][j].Y, 32, 32);
                         }
+                        else if (Map.Objects[i][j].Id >= 220 && Map.Objects[i][j].Id < 240)
+                        {
+                            e.Graphics.FillRectangle(Brushes.PaleVioletRed, Map.Objects[i][j].X + 4, Map.Objects[i][j].Y + 4, 24, 24);
+                        }
+                        else if (Map.Objects[i][j].Id >= 200 && Map.Objects[i][j].Id < 220)
+                        {
+                            e.Graphics.FillRectangle(Brushes.Yellow, Map.Objects[i][j].X + 4, Map.Objects[i][j].Y + 4, 24, 24);
+                        }
+                        else if (Map.Objects[i][j].Id >= 240 && Map.Objects[i][j].Id < 260)
+                        {
+                            e.Graphics.FillRectangle(Brushes.Blue, Map.Objects[i][j].X + 4, Map.Objects[i][j].Y + 4, 24, 24);
+                        }
+                        else if (Map.Objects[i][j].Id >= 260 && Map.Objects[i][j].Id < 280)
+                        {
+                            e.Graphics.FillRectangle(Brushes.DarkRed, Map.Objects[i][j].X + 4, Map.Objects[i][j].Y + 4, 24, 24);
+                        }
                     }
                 }
             }
@@ -123,19 +141,19 @@ namespace DesignPatternsClientSide
         {
             if (e.KeyCode == Keys.Left)
             {
-                sendMessage("Left");
+                SendMessage("Left");
             }
             else if (e.KeyCode == Keys.Right)
             {
-                sendMessage("Right");
+                SendMessage("Right");
             }
             else if (e.KeyCode == Keys.Up)
             {
-                sendMessage("Up");
+                SendMessage("Up");
             }
             else if (e.KeyCode == Keys.Down)
             {
-                sendMessage("Down");
+                SendMessage("Down");
             }
         }
 
@@ -163,7 +181,7 @@ namespace DesignPatternsClientSide
         /// Send information to server
         /// </summary>
         /// <param name="message"></param>
-        private void sendMessage(string message)
+        private void SendMessage(string message)
         {
             byte[] commandBuffer = Encoding.ASCII.GetBytes(message);
             this.socket.Send(commandBuffer);

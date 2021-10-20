@@ -12,10 +12,19 @@ namespace Server
 {
     class Program
     {
-        private static List<int> playerIds = new List<int>();
+        const string TYPE_PLAYER = "player";
+        const string TYPE_ENEMY_FAST = "enemy_fast";
+        const string TYPE_ENEMY_SLOW = "enemy_slow";
+        const string TYPE_ENEMY_NORMAL = "enemy_normal";
+        const string TYPE_ENEMY_GHOST = "enemy_ghost";
+
+
+        private static List<int> mapObjectsIds = new List<int>();
         private static Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         private static Subject Subject = new Subject();
         private static List<Player> players = new List<Player>();
+        private static List<Enemy> enemies = new List<Enemy>();
+
         private static Map map = new Map(512, 512);
 
         static void Main(string[] args)
@@ -42,6 +51,31 @@ namespace Server
             }
 
             // Start Listening Thread for each player
+            for (int i = 0; i < 1; i++)
+            {
+                Enemy enemy = new NormalEnemy(GenerateGameObjectId(TYPE_ENEMY_NORMAL), map);
+                enemy.SetAlgorithm(new NormalAlgorithm());
+                enemies.Add(enemy);
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_SLOW), map);
+                enemy.SetAlgorithm(new SlowAlgorithm());
+                enemies.Add(enemy);
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                Enemy enemy = new FastEnemy(GenerateGameObjectId(TYPE_ENEMY_FAST), map);
+                enemy.SetAlgorithm(new FastAlgorithm());
+                enemies.Add(enemy);
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_GHOST), map);
+                enemy.SetAlgorithm(new GhostAlgorithm());
+                enemies.Add(enemy);
+            }
+
             foreach (var pl in players)
             {
                 Thread thread = new Thread(() => PlayerCommunication(pl));
@@ -77,7 +111,7 @@ namespace Server
             clientSocket.Receive(responseBuffer);
             string username = (players.Count + 1).ToString();
             Console.WriteLine("player connected: " + username);
-            int id = GeneratePlayerId();
+            int id = GenerateGameObjectId(TYPE_PLAYER);
             Player newPlayer = new Player(id, username, clientSocket, map);
             players.Add(newPlayer);
             Subject.Register(newPlayer);
@@ -88,15 +122,46 @@ namespace Server
         /// First player is always given ID 100.
         /// </summary>
         /// <returns>Player ID</returns>
-        private static int GeneratePlayerId()
+        private static int GenerateGameObjectId(string Type)
         {
             Random rnd = new Random();
-            int randInt = 100;
-            while (playerIds.Contains(randInt))
+            int randInt = 0;
+            int lowerB = 0;
+            int upperB = 0;
+            switch (Type)
             {
-                randInt = rnd.Next(101, 200);
+                case TYPE_PLAYER:
+                    randInt = 100;
+                    lowerB = 101;
+                    upperB = 200;
+                    break;
+                case TYPE_ENEMY_SLOW:
+                    randInt = 200;
+                    lowerB = 201;
+                    upperB = 220;
+                    break;
+                case TYPE_ENEMY_NORMAL:
+                    randInt = 220;
+                    lowerB = 221;
+                    upperB = 240;
+                    break;
+                case TYPE_ENEMY_FAST:
+                    randInt = 240;
+                    lowerB = 241;
+                    upperB = 260;
+                    break;
+                case TYPE_ENEMY_GHOST:
+                    randInt = 260;
+                    lowerB = 261;
+                    upperB = 280;
+                    break;
+
             }
-            playerIds.Add(randInt);
+            while (mapObjectsIds.Contains(randInt))
+            {
+                randInt = rnd.Next(lowerB, upperB);
+            }
+            mapObjectsIds.Add(randInt);
             return randInt;
         }
 
@@ -136,7 +201,6 @@ namespace Server
                 // Server timer forcing movement updates every 200ms
                 var t = Task.Factory.StartNew(() =>
                 {
-
                     Task.Delay(200).Wait();
                 });
                 t.Wait();
@@ -162,15 +226,39 @@ namespace Server
                 for (int j = 0; j < map.Objects[i].Length; j++)
                 {
                     // Players
-                    if (map.Objects[i][j].Id >= 100 && map.Objects[i][j].Id < 200 && !movedIds.Contains(map.Objects[i][j].Id)) 
+                    if (map.Objects[i][j].Id >= 100 && map.Objects[i][j].Id < 200 && !movedIds.Contains(map.Objects[i][j].Id))
                     {
                         // Making sure not to move the same ID more than once
                         movedIds.Add(map.Objects[i][j].Id);
                         HandlePlayerMovement(map.Objects[i][j].Id, i, j);
                     }
+                    else if (map.Objects[i][j].Id >= 200 && map.Objects[i][j].Id < 280 && !movedIds.Contains(map.Objects[i][j].Id))
+                    {
+                        movedIds.Add(map.Objects[i][j].Id);
+                        HandleEnemyMovement(map.Objects[i][j].Id, i, j);
+                    }
                     // AIs ?
                 }
             }
+        }
+
+        private static void HandleEnemyMovement(int id, int x, int y)
+        {
+            Enemy enemy = enemies.Find(E => E.Id == id);
+            int newX;
+            int newY;
+            bool canMove = enemy.executeAlgorithm(x, y, map, out newX, out newY);
+            if (canMove)
+            {
+                map.Objects[newX][newY] = new MapObject(map.Objects[newX][newY].X, map.Objects[newX][newY].Y, id, true);
+
+                if (map.Objects[x][y].Id != 1)
+                {
+                    map.Objects[x][y] = new MapObject(map.Objects[x][y].X, map.Objects[x][y].Y);
+                }
+
+            }
+            return;
         }
 
         /// <summary>
@@ -217,7 +305,7 @@ namespace Server
 
             // Move player to the new location
             map.Objects[newX][newY] = new MapObject(map.Objects[newX][newY].X, map.Objects[newX][newY].Y, map.Objects[x][y].Id, true);
-            
+
             // Remove old player location and make it an empty space (ID 0 by default)
             map.Objects[x][y] = new MapObject(map.Objects[x][y].X, map.Objects[x][y].Y);
         }
