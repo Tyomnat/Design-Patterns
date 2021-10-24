@@ -85,7 +85,7 @@ namespace Server
             }
         }
 
-        public void HandlePlayerMoved(string data)
+        public void Move(string data)
         {
             //Receive change of direction
             switch (data)
