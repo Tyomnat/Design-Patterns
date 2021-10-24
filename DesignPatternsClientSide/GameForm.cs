@@ -155,6 +155,10 @@ namespace DesignPatternsClientSide
             {
                 SendMessage("Down");
             }
+            else if (e.KeyCode == Keys.Z)
+            {
+                SendMessage("Undo");
+            }
         }
 
         /// <summary>

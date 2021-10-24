@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using Newtonsoft.Json;
 
+
 namespace Server
 {
     class Program
@@ -24,6 +25,7 @@ namespace Server
         private static Subject Subject = new Subject();
         private static List<Player> players = new List<Player>();
         private static List<Enemy> enemies = new List<Enemy>();
+        private static PlayerController playerController = new PlayerController();
 
         private static Map map = new Map(512, 512);
 
@@ -177,7 +179,16 @@ namespace Server
             while (player.GetSocket().Connected)
             {
                 // Receive updated movement direction if any
-                player.HandlePlayerMoved(player.ReceiveMessage());
+                string message = player.ReceiveMessage();
+                if (message == "Undo")
+                {
+                    playerController.Undo();
+                }
+                else
+                {
+                    ICommand command = CommandFactory.GetCommand(message, player);
+                    playerController.Run(command);
+                }
             }
         }
 
