@@ -8,6 +8,6 @@ namespace Server
 {
     abstract class MoveAlgorithm
     {
-        public abstract bool MoveDifferently(int x, int y, Map map, out int newX, out int newY);
+        public abstract bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY);
     }
 }

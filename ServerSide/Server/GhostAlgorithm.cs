@@ -9,7 +9,7 @@ namespace Server
     class GhostAlgorithm : MoveAlgorithm
     {
         private bool isOnWall = false;
-        public override bool MoveDifferently(int x, int y, Map map, out int newX, out int newY)
+        public override bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
         {
             List<int> checkedNumbers = new List<int>();
             Random rnd = new Random();
@@ -49,21 +49,21 @@ namespace Server
                 }
                 if (
                     newX < 0 ||
-                    newX > map.Objects.GetLength(0) - 1 ||
+                    newX > Map.GetInstance().Objects.GetLength(0) - 1 ||
                     newY < 0 ||
-                    newY > map.Objects[newX].Length - 1)
+                    newY > Map.GetInstance().Objects[newX].Length - 1)
                 {
                     checkedNumbers.Add(randInt);
                     continue;
                 }
-                if (map.Objects[newX][newY].Id == 0 || map.Objects[newX][newY].Id == 1)
+                if (Map.GetInstance().Objects[newX][newY].Id == 0 || Map.GetInstance().Objects[newX][newY].Id == 1)
                 {
                     if (isOnWall)
                     {
-                        map.Objects[x][y].Id = 1;
+                        Map.GetInstance().Objects[x][y].Id = 1;
                         isOnWall = false;
                     }
-                    if (map.Objects[newX][newY].Id == 1)
+                    if (Map.GetInstance().Objects[newX][newY].Id == 1)
                     {
                         isOnWall = true;
                     }

@@ -8,7 +8,7 @@ namespace Server
 {
     class NormalAlgorithm : MoveAlgorithm
     {
-        public override bool MoveDifferently(int x, int y, Map map, out int newX, out int newY)
+        public override bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
         {
             List<int> checkedNumbers = new List<int>();
             Random rnd = new Random();
@@ -48,14 +48,14 @@ namespace Server
                 }
                 if (
                     newX < 0 ||
-                    newX > map.Objects.GetLength(0) - 1 ||
+                    newX > Map.GetInstance().Objects.GetLength(0) - 1 ||
                     newY < 0 ||
-                    newY > map.Objects[newX].Length - 1 || map.Objects[newX][newY].isSolid == true)
+                    newY > Map.GetInstance().Objects[newX].Length - 1 || Map.GetInstance().Objects[newX][newY].isSolid == true)
                 {
                     checkedNumbers.Add(randInt);
                     continue;
                 }
-                if (map.Objects[newX][newY].isSolid != true)
+                if (Map.GetInstance().Objects[newX][newY].isSolid != true)
                 {
                     return true;
                     //break;

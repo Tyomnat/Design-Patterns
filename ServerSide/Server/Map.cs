@@ -11,14 +11,38 @@ namespace Server
         public int Width { get; set; }
         public int Height { get; set; }
         public MapObject[][] Objects;
+        const int W = 512;
+        const int H = 512;
 
-        public Map(int width, int height)
+        private static Map MapInstance;
+
+        private static readonly object Lock = new object();
+
+        public Map()
         {
-            Width = width;
-            Height = height;
-            Objects = new MapObject[width / 32][];
-            Objects = GenerateMap(width, height, Objects);
+            Width = W;
+            Height = H;
+            Objects = new MapObject[Width / 32][];
+            Objects = GenerateMap(Width, Height, Objects);
         }
+
+        public static Map GetInstance()
+        {
+            if (MapInstance == null)
+            {
+                lock (Lock)
+                {
+
+                    if (MapInstance == null)
+                    {
+                        MapInstance = new Map();
+                    }
+                }
+            }
+
+            return MapInstance;
+        }
+
 
         /// <summary>
         /// Temporary map generation solution
