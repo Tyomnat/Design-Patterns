@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class GhostAlgorithm : MoveAlgorithm
+    class NormalAlgorithm : MoveAlgorithm
     {
-        private bool isOnWall = false;
         public override bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
         {
             List<int> checkedNumbers = new List<int>();
@@ -51,21 +50,16 @@ namespace Server
                     newX < 0 ||
                     newX > Map.GetInstance().Objects.GetLength(0) - 1 ||
                     newY < 0 ||
-                    newY > Map.GetInstance().Objects[newX].Length - 1)
+                    newY > Map.GetInstance().Objects[newX].Length - 1 || Map.GetInstance().Objects[newX][newY].isSolid == true)
                 {
                     checkedNumbers.Add(randInt);
                     continue;
                 }
-                if (Map.GetInstance().Objects[newX][newY].Id == 0 || Map.GetInstance().Objects[newX][newY].Id == 1)
+                if (Map.GetInstance().Objects[newX][newY].isSolid != true)
                 {
-                    if (isOnWall)
+                    if (ContainsPickupItem(Map.GetInstance().Objects[newX][newY].Id) || IsOnPickupItem)
                     {
-                        Map.GetInstance().Objects[x][y].Id = 1;
-                        isOnWall = false;
-                    }
-                    if (Map.GetInstance().Objects[newX][newY].Id == 1)
-                    {
-                        isOnWall = true;
+                        HandlePickupItem(x, y, newX, newY);
                     }
                     return true;
                     //break;

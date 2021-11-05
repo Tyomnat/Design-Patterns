@@ -21,6 +21,7 @@ namespace DesignPatternsClientSide
         private Socket socket;
         private static Player player = new Player();
         private static Map Map;
+        private static List<PlayerScore> PlayerScores = new List<PlayerScore>();
 
         public GameForm(Socket socket)
         {
@@ -45,43 +46,68 @@ namespace DesignPatternsClientSide
                 // Receive message
                 byte[] messageBuffer = new byte[100000];
                 serverSocket.Receive(messageBuffer);
-                string message = Encoding.ASCII.GetString(messageBuffer);
-
+                string messages = Encoding.ASCII.GetString(messageBuffer);
+                string[] events = messages.Split("eventend");
                 // Start of message will contain socket intended information
                 // Map update socket
-                if (message.Contains("map"))
+                foreach (var message in events)
                 {
-                    // Don't ask
-                    string json = message.Split("_")[1].Split("\0")[0].Replace("map", "");
-                    dynamic d = JsonConvert.DeserializeObject(json);
-
-                    // New map object
-                    Map map = new Map(int.Parse((string)d.Width), int.Parse((string)d.Height));
-                    int j = 0;
-                    foreach (var mapObjectsArr in d.Objects) // X loop
+                    if (message.Contains("scores"))
                     {
-                        MapObject[] newMapObjectsArr = new MapObject[map.Height / 32];
-                        int i = 0;
-                        foreach (var mapObjectParsed in mapObjectsArr) // Y loop
+                        string json = message.Split("_")[1].Split("\0")[0].Replace("scores", "");
+                        dynamic d = JsonConvert.DeserializeObject(json);
+                        List<PlayerScore> newScoreList = new List<PlayerScore>();
+                        foreach (var playerScoreParsed in d)
                         {
-                            MapObject mapObject = new MapObject(int.Parse((string)mapObjectParsed.X),
-                                                                int.Parse((string)mapObjectParsed.Y),
-                                                                int.Parse((string)mapObjectParsed.Id));
-                            newMapObjectsArr[i] = mapObject;
-                            i++;
+                            PlayerScore playerScore = new PlayerScore(int.Parse((string)playerScoreParsed.PlayerId),
+                                                                int.Parse((string)playerScoreParsed.Score));
+                            newScoreList.Add(playerScore);
+
                         }
-                        map.Objects[j] = newMapObjectsArr;
-                        j++;
+                        PlayerScores = newScoreList;
+                        // message = message.Split("_")[1];
                     }
-                    // Assign local map to Global map
-                    Map = map;
+
+                    else if (message.Contains("map"))
+                    {
+                        // Don't ask
+                        string json = message.Split("\0")[0].Replace("map", "").Replace("_", "");
+                        dynamic d = JsonConvert.DeserializeObject(json);
+
+                        // New map object
+                        Map map = new Map(int.Parse((string)d.Width), int.Parse((string)d.Height));
+                        int j = 0;
+                        foreach (var mapObjectsArr in d.Objects) // X loop
+                        {
+                            MapObject[] newMapObjectsArr = new MapObject[map.Height / 32];
+                            int i = 0;
+                            foreach (var mapObjectParsed in mapObjectsArr) // Y loop
+                            {
+                                MapObject mapObject = new MapObject(int.Parse((string)mapObjectParsed.X),
+                                                                    int.Parse((string)mapObjectParsed.Y),
+                                                                    int.Parse((string)mapObjectParsed.Id));
+                                newMapObjectsArr[i] = mapObject;
+                                i++;
+                            }
+                            map.Objects[j] = newMapObjectsArr;
+                            j++;
+                        }
+                        // Assign local map to Global map
+                        Map = map;
+                    }
+                    // Receiving server assigned current client player ID
+                    else if (message.Contains("id"))
+                    {
+                        player.Id = int.Parse(message.Split(":")[1]);
+                    }
                 }
-                // Receiving server assigned current client player ID
-                else if (message.Contains("id"))
-                {
-                    player.Id = int.Parse(message.Split(":")[1]);
-                }
+
             }
+        }
+
+        private string findPlayerScore(int Id)
+        {
+            return PlayerScores.Find(PS => PS.PlayerId == Id).Score.ToString();
         }
 
         /// <summary>
@@ -101,10 +127,13 @@ namespace DesignPatternsClientSide
                         if (Map.Objects[i][j].Id == player.Id) // Current client player
                         {
                             e.Graphics.FillEllipse(Brushes.Green, Map.Objects[i][j].X, Map.Objects[i][j].Y, 32, 32);
+                            e.Graphics.DrawString(findPlayerScore(player.Id), new Font("Arial", 10), Brushes.Black, new PointF(Map.Objects[i][j].X + 8, Map.Objects[i][j].Y + 8));
                         }
                         else if (Map.Objects[i][j].Id >= 100 && Map.Objects[i][j].Id < 200) // Other client players
                         {
+
                             e.Graphics.FillEllipse(Brushes.Red, Map.Objects[i][j].X, Map.Objects[i][j].Y, 32, 32);
+                            e.Graphics.DrawString(findPlayerScore(Map.Objects[i][j].Id), new Font("Arial", 10), Brushes.Black, new PointF(Map.Objects[i][j].X + 8, Map.Objects[i][j].Y + 8));
                         }
                         else if (Map.Objects[i][j].Id == 1) // Wall
                         {
@@ -125,6 +154,14 @@ namespace DesignPatternsClientSide
                         else if (Map.Objects[i][j].Id >= 260 && Map.Objects[i][j].Id < 280)
                         {
                             e.Graphics.FillRectangle(Brushes.DarkRed, Map.Objects[i][j].X + 4, Map.Objects[i][j].Y + 4, 24, 24);
+                        }
+                        else if (Map.Objects[i][j].Id == 500)//cherry
+                        {
+                            e.Graphics.FillEllipse(Brushes.Red, Map.Objects[i][j].X + 11, Map.Objects[i][j].Y + 11, 10, 10);
+                        }
+                        else if (Map.Objects[i][j].Id == 501)//apple
+                        {
+                            e.Graphics.FillEllipse(Brushes.GreenYellow, Map.Objects[i][j].X + 6, Map.Objects[i][j].Y + 6, 20, 20);
                         }
                     }
                 }

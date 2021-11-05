@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json;
 using Newtonsoft.Json;
-
+using Server.PointItems;
 
 namespace Server
 {
@@ -20,12 +20,18 @@ namespace Server
         const string TYPE_ENEMY_GHOST = "enemy_ghost";
 
 
+
+
         private static List<int> mapObjectsIds = new List<int>();
         private static Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         private static Subject Subject = new Subject();
         private static List<Player> players = new List<Player>();
         private static List<Enemy> enemies = new List<Enemy>();
         private static PlayerController playerController = new PlayerController();
+        private static List<int> PickupItemsIds = new List<int>() { 500, 501 };
+        private static List<PlayerScore> PlayerScores = new List<PlayerScore>();
+        private static readonly object EnemyListLock = new object();
+
 
         static void Main(string[] args)
         {
@@ -57,7 +63,7 @@ namespace Server
                 {
                     Enemy enemy = new NormalEnemy(GenerateGameObjectId(TYPE_ENEMY_NORMAL), Map.GetInstance());
                     enemy.SetAlgorithm(new NormalAlgorithm());
-                    enemies.Add(enemy);
+                    AddToEnemyListThreadSafe(enemy);
                 });
                 thread.Start();
 
@@ -68,7 +74,7 @@ namespace Server
                 {
                     Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_SLOW), Map.GetInstance());
                     enemy.SetAlgorithm(new SlowAlgorithm());
-                    enemies.Add(enemy);
+                    AddToEnemyListThreadSafe(enemy);
                 });
                 thread.Start();
             }
@@ -78,7 +84,7 @@ namespace Server
                 {
                     Enemy enemy = new FastEnemy(GenerateGameObjectId(TYPE_ENEMY_FAST), Map.GetInstance());
                     enemy.SetAlgorithm(new FastAlgorithm());
-                    enemies.Add(enemy);
+                    AddToEnemyListThreadSafe(enemy);
                 });
                 thread.Start();
             }
@@ -88,7 +94,16 @@ namespace Server
                 {
                     Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_GHOST), Map.GetInstance());
                     enemy.SetAlgorithm(new GhostAlgorithm());
-                    enemies.Add(enemy);
+                    AddToEnemyListThreadSafe(enemy);
+                });
+                thread.Start();
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                Thread thread = new Thread(() =>
+                {
+                    Cherry cherry = new Cherry(Map.GetInstance());
+                    Apple apple = new Apple(Map.GetInstance());
                 });
                 thread.Start();
             }
@@ -130,10 +145,19 @@ namespace Server
             Console.WriteLine("player connected: " + username);
             int id = GenerateGameObjectId(TYPE_PLAYER);
             Player newPlayer = new Player(id, username, clientSocket, Map.GetInstance());
+            PlayerScore playerScore = new PlayerScore(id);
+            PlayerScores.Add(playerScore);
             players.Add(newPlayer);
             Subject.Register(newPlayer);
         }
 
+        private static void AddToEnemyListThreadSafe(Enemy enemy)
+        {
+            lock (EnemyListLock)
+            {
+                enemies.Add(enemy);
+            }
+        }
         /// <summary>
         /// Generate an ID for players (100; 200)
         /// First player is always given ID 100.
@@ -188,7 +212,7 @@ namespace Server
             if (player.GetSocket().Connected)
             {
                 // Initial player ID send out to store in the client side
-                byte[] bytes = Encoding.ASCII.GetBytes("id:" + player.Id.ToString());
+                byte[] bytes = Encoding.ASCII.GetBytes("id:" + player.Id.ToString() + "eventend");
                 player.GetSocket().Send(bytes);
             }
             while (player.GetSocket().Connected)
@@ -233,8 +257,16 @@ namespace Server
 
                 //Function to run update to all map elements
                 UpdateMap();
-                Event gameEvent = new Event("map_updated", JsonConvert.SerializeObject(Map.GetInstance()));
-                Subject.Update(gameEvent);
+                var taskMapUpdate = Task.Factory.StartNew(() =>
+                {
+                    Event gameEvent = new Event("map_updated", JsonConvert.SerializeObject(Map.GetInstance()));
+                    Subject.Update(gameEvent);
+                });
+                taskMapUpdate.Wait();
+
+                Event playerScoresUpdatedEvent = new Event("scores_updated", JsonConvert.SerializeObject(PlayerScores));
+                Subject.Update(playerScoresUpdatedEvent);
+
             }
         }
 
@@ -271,20 +303,24 @@ namespace Server
         private static void HandleEnemyMovement(int id, int x, int y)
         {
             Enemy enemy = enemies.Find(E => E.Id == id);
-            int newX;
-            int newY;
-            bool canMove = enemy.executeAlgorithm(x, y, Map.GetInstance(), out newX, out newY);
-            if (canMove)
+            if (enemy != null)
             {
-                Map.GetInstance().Objects[newX][newY] = new MapObject(Map.GetInstance().Objects[newX][newY].X, Map.GetInstance().Objects[newX][newY].Y, id, true);
-
-                if (Map.GetInstance().Objects[x][y].Id != 1)
+                int newX;
+                int newY;
+                bool canMove = enemy.executeAlgorithm(x, y, Map.GetInstance(), out newX, out newY);
+                if (canMove)
                 {
-                    Map.GetInstance().Objects[x][y] = new MapObject(Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
-                }
+                    Map.GetInstance().Objects[newX][newY] = new MapObject(Map.GetInstance().Objects[newX][newY].X, Map.GetInstance().Objects[newX][newY].Y, id, true);
 
+                    if (!PickupItemsIds.Contains(Map.GetInstance().Objects[x][y].Id) && Map.GetInstance().Objects[x][y].Id != 1)
+                    {
+                        Map.GetInstance().Objects[x][y] = new MapObject(Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
+                    }
+
+                }
+                return;
             }
-            return;
+
         }
 
         /// <summary>
@@ -329,6 +365,19 @@ namespace Server
             if (Map.GetInstance().Objects[newX][newY].isSolid == true)
                 return; // Player does not move, because target location is impassable
 
+            if (PickupItemsIds.Contains(Map.GetInstance().Objects[newX][newY].Id))
+            {
+                PlayerScore ps = PlayerScores.Find(PS => PS.PlayerId == player.Id);
+                if (ps != null)
+                {
+                    PointItem pi = (Map.GetInstance().Objects[newX][newY] as PointItem);
+                    if (pi != null)
+                    {
+                        ps.Score += pi.Amount;
+                    }
+
+                }
+            }
             // Move player to the new location
             Map.GetInstance().Objects[newX][newY] = new MapObject(Map.GetInstance().Objects[newX][newY].X, Map.GetInstance().Objects[newX][newY].Y, Map.GetInstance().Objects[x][y].Id, true);
 

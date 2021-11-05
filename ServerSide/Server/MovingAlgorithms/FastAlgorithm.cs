@@ -62,8 +62,17 @@ namespace Server
                 }
                 if (Map.GetInstance().Objects[newX][newY].isSolid != true && !isBetweenBlock(newX, newY, Map.GetInstance(), randInt))
                 {
+                    if (ContainsPickupItem(Map.GetInstance().Objects[newX][newY].Id) || IsOnPickupItem)
+                    {
+                        HandlePickupItem(x, y, newX, newY);
+                    }
                     return true;
                     //break;
+                }
+                else
+                {
+                    checkedNumbers.Add(randInt);
+                    continue;
                 }
 
             }

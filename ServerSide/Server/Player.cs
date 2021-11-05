@@ -83,6 +83,10 @@ namespace Server
             {
                 HandleMapUpdated(gameEvent.Data);
             }
+            if (gameEvent.Type == "scores_updated")
+            {
+                SendMessage("scores_" + gameEvent.Data + "eventend");
+            }
         }
 
         public void Move(string data)
@@ -106,7 +110,7 @@ namespace Server
         }
         private void HandleMapUpdated(string data)
         {
-            SendMessage("map_" + data);
+            SendMessage("map_" + data + "eventend");
         }
     }
 }
