@@ -14,7 +14,7 @@ namespace Server
             {
                 case "Up":
                     return new MoveUpCommand(player);
-                case "Down":
+                case "Down"://sometimes DownDown, etc., duplicates
                     return new MoveDownCommand(player);
                 case "Left":
                     return new MoveLeftCommand(player);

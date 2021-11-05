@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class NormalAlgorithm : MoveAlgorithm
+    class GhostAlgorithm : MoveAlgorithm
     {
+        private bool isOnWall = false;
         public override bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
         {
             List<int> checkedNumbers = new List<int>();
@@ -50,13 +51,33 @@ namespace Server
                     newX < 0 ||
                     newX > Map.GetInstance().Objects.GetLength(0) - 1 ||
                     newY < 0 ||
-                    newY > Map.GetInstance().Objects[newX].Length - 1 || Map.GetInstance().Objects[newX][newY].isSolid == true)
+                    newY > Map.GetInstance().Objects[newX].Length - 1)
                 {
                     checkedNumbers.Add(randInt);
                     continue;
                 }
-                if (Map.GetInstance().Objects[newX][newY].isSolid != true)
+                if (Map.GetInstance().Objects[newX][newY].Id == 0 || Map.GetInstance().Objects[newX][newY].Id == 1 ||
+                    ContainsPickupItem(Map.GetInstance().Objects[newX][newY].Id) || IsOnPickupItem)
                 {
+                    if (Map.GetInstance().Objects[newX][newY].isSolid && Map.GetInstance().Objects[newX][newY].Id != 1)
+                    {
+                        checkedNumbers.Add(randInt);
+                        continue;
+                    }
+                    if (isOnWall)
+                    {
+                        Map.GetInstance().Objects[x][y].Id = 1;
+                        isOnWall = false;
+                    }
+                    if (Map.GetInstance().Objects[newX][newY].Id == 1)
+                    {
+                        isOnWall = true;
+                    }
+                    if (ContainsPickupItem(Map.GetInstance().Objects[newX][newY].Id) || IsOnPickupItem)
+                    {
+                        HandlePickupItem(x, y, newX, newY);
+                    }
+
                     return true;
                     //break;
                 }

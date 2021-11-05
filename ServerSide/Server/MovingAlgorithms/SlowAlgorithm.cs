@@ -64,6 +64,10 @@ namespace Server
                     }
                     if (map.Objects[newX][newY].isSolid != true)
                     {
+                        if (ContainsPickupItem(Map.GetInstance().Objects[newX][newY].Id) || IsOnPickupItem)
+                        {
+                            HandlePickupItem(x, y, newX, newY);
+                        }
                         return true;
                         //break;
                     }
