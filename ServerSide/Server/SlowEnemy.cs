@@ -13,7 +13,7 @@ namespace Server
             throw new NotImplementedException();
         }
 
-        public SlowEnemy(int Id, Map map) : base(Id, "slow", map)
+        public SlowEnemy(int Id, Map Map) : base(Id, "slow", Map)
         {
         }
     }
