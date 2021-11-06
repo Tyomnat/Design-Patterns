@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.PointItems;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,19 @@ namespace Server
 {
     abstract class PointItem : MapObject
     {
-        public int Amount { get; private set; }
+        Sound Sound;
+        public int Amount { get; set; }
         private Map Map;
+
+        public void SetSound(Sound sound)
+        {
+            this.Sound = sound;
+        }
+
+        public string Play()
+        {
+            return Sound != null ? this.Sound.Play() : "";
+        }
 
         public PointItem(int Id, int Amount, Map Map) : base(Id)
         {

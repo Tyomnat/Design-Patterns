@@ -98,14 +98,21 @@ namespace Server
                 });
                 thread.Start();
             }
+            Random rnd = new Random();
             for (int i = 0; i < 4; i++)
             {
-                Thread thread = new Thread(() =>
+
+                Thread thread = new Thread((rnd) =>
                 {
+                    int rn = (rnd as Random).Next(1, 5);
                     Cherry cherry = new Cherry(Map.GetInstance());
+                    SetPointItemValues(rn, cherry);
+
+                    rn = (rnd as Random).Next(1, 5);
                     Apple apple = new Apple(Map.GetInstance());
+                    SetPointItemValues(rn, apple);
                 });
-                thread.Start();
+                thread.Start(rnd);
             }
 
             foreach (var pl in players)
@@ -123,9 +130,22 @@ namespace Server
             while (!false)
             {
             }
+        }
 
-            //Console.WriteLine("2 players connected. Game starting");
-            //Console.ReadLine();
+        private static void SetPointItemValues(int randInt, PointItem pi)
+        {
+            Sound sound;
+            if (randInt == 1)
+            {
+                sound = new PoisonousSound();
+                pi.Amount = -pi.Amount;
+            }
+            else
+            {
+                sound = new TastySound();
+            }
+
+            pi.SetSound(sound);
         }
 
         /// <summary>
@@ -374,6 +394,7 @@ namespace Server
                     if (pi != null)
                     {
                         ps.Score += pi.Amount;
+                        player.SendMessage("point_item_pickup" + pi.Play() + "eventend");
                     }
 
                 }
