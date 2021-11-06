@@ -85,7 +85,7 @@ namespace Server
             }
             if (gameEvent.Type == "scores_updated")
             {
-                SendMessage("scores_" + gameEvent.Data + "eventend");
+                SendMessage("scores_" + gameEvent.Data);
             }
         }
 
@@ -110,7 +110,7 @@ namespace Server
         }
         private void HandleMapUpdated(string data)
         {
-            SendMessage("map_" + data + "eventend");
+            SendMessage("map_" + data);
         }
     }
 }

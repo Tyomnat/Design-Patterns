@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Media;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -100,8 +102,38 @@ namespace DesignPatternsClientSide
                     {
                         player.Id = int.Parse(message.Split(":")[1]);
                     }
+                    else if (message.Contains("point_item_pickup"))
+                    {
+                        string soundType = message.Split("point_item_pickup")[1];
+                        PlayPickupItemSound(soundType);
+                    }
                 }
 
+            }
+        }
+
+        private static void PlayPickupItemSound(string soundType)
+        {
+            string sound = "";
+            switch (soundType)
+            {
+                case "poisonousSound":
+                    sound = "poisonoussound";
+                    break;
+                case "tastySound":
+                    sound = "tastysound";
+                    break;
+                default:
+                    break;
+
+            }
+            if (sound != "")
+            {
+                string workingDirectory = Environment.CurrentDirectory;
+                string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+
+                SoundPlayer simpleSound = new SoundPlayer(projectDirectory + "/sounds/" + sound + ".wav");
+                simpleSound.Play();
             }
         }
 

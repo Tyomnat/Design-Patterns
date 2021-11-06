@@ -9,6 +9,7 @@ namespace Server
 {
     abstract class MoveAlgorithm
     {
+        protected PointItem StandingOnItem;
         protected bool IsOnPickupItem = false;
         protected Type PickupType;
         protected int OnPickupItemId;
@@ -29,11 +30,13 @@ namespace Server
                 Map.GetInstance().Objects[x][y].isSolid = false;
                 if (PickupType == typeof(Apple))//any new pickup type must be added here
                 {
-                    Map.GetInstance().Objects[x][y] = new Apple(Map.GetInstance(), Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
+                    // Map.GetInstance().Objects[x][y] = new Apple(Map.GetInstance(), Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
+                    Map.GetInstance().Objects[x][y] = StandingOnItem as Apple;
                 }
                 if (PickupType == typeof(Cherry))
                 {
-                    Map.GetInstance().Objects[x][y] = new Cherry(Map.GetInstance(), Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
+                    Map.GetInstance().Objects[x][y] = StandingOnItem as Cherry;
+                    //Map.GetInstance().Objects[x][y] = new Cherry(Map.GetInstance(), Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
                 }
 
             }
@@ -41,6 +44,7 @@ namespace Server
             {
                 PickupType = Map.GetInstance().Objects[newX][newY].GetType();
                 IsOnPickupItem = true;
+                StandingOnItem = Map.GetInstance().Objects[newX][newY] as PointItem;
                 OnPickupItemId = Map.GetInstance().Objects[newX][newY].Id;
             }
         }

@@ -14,7 +14,7 @@ namespace Server
         public Event(string type, string data)
         {
             Type = type;
-            Data = data;
+            Data = data + "eventend";
         }
         public string Type { get; }
 
