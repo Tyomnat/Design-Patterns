@@ -101,11 +101,18 @@ namespace DesignPatternsClientSide
                     else if (message.Contains("id"))
                     {
                         player.Id = int.Parse(message.Split(":")[1]);
+                        player.Lives = 3;
+                        
                     }
                     else if (message.Contains("point_item_pickup"))
                     {
                         string soundType = message.Split("point_item_pickup")[1];
                         PlayPickupItemSound(soundType);
+                    }
+                    else if (message.Contains("takeDamage"))
+                    {
+                        string newHP = message.Split("takeDamage_")[1];
+                        player.Lives = int.Parse(newHP);
                     }
                 }
 
@@ -149,6 +156,12 @@ namespace DesignPatternsClientSide
         /// <param name="e"></param>
         private void GameForm_Paint(object sender, PaintEventArgs e)
         {
+            if (player.Lives > 0)
+                lives.Text = "Lives: " + player.Lives.ToString();
+            else{
+                lives.Visible = false;
+                gameOver.Visible = true;
+            }
             // If we have the map
             if (Map != null)
             {
@@ -276,7 +289,7 @@ namespace DesignPatternsClientSide
         /// <param name="e"></param>
         private void GameForm_Load(object sender, EventArgs e)
         {
-
+            player.Lives = 3;
         }
 
         /// <summary>

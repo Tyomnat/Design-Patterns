@@ -8,12 +8,17 @@ namespace Server
 {
     class SlowEnemy : Enemy
     {
-        public override void Attack()
+        public override void Attack(int AIx, int AIy, List<Player> players)
         {
-            throw new NotImplementedException();
+            Player player = FindPlayer(AIx, AIy, players);
+            if (player != null)
+            {
+                player.HandleDamage();
+                this.State = "standing";
+            }
         }
 
-        public SlowEnemy(int Id, Map Map) : base(Id, "slow", Map)
+        public SlowEnemy(int Id, Map Map) : base(Id, "slow", Map, 2)
         {
             //
         }

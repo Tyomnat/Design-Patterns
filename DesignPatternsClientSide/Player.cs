@@ -10,5 +10,7 @@ namespace DesignPatternsClientSide
         public int Y { get; set; }
 
         public int Id { get; set; }
+
+        public int Lives { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace Server
         protected int OnPickupItemId;
         protected List<int> PickupItemsIds = new List<int>() { 500, 501, 502, 503, 504 }; // Pickup and power up items
 
-        public abstract bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY);
+        public abstract string MoveDifferently(int x, int y, Map Map, out int newX, out int newY);
 
         protected bool ContainsPickupItem(int id)
         {
@@ -76,5 +76,43 @@ namespace Server
             }
         }
 
+        public bool isNearPlayer(int x, int y)
+        {
+            int newX = x, newY = y;
+            for(int i = 0; i < 4; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        newX = x;
+                        newY = y - 1;
+                        break;
+                    case 1:
+                        newX = x;
+                        newY = y + 1;
+                        break;
+                    case 2:
+                        newX = x - 1;
+                        newY = y;
+                        break;
+                    case 3:
+                        newX = x + 1;
+                        newY = y;
+                        break;
+                }
+                if (
+                newX < 0 ||
+                newX > Map.GetInstance().Objects.GetLength(0) - 1 ||
+                newY < 0 ||
+                newY > Map.GetInstance().Objects[newX].Length - 1)
+                {
+                    continue;
+                } else if (Map.GetInstance().Objects[newX][newY].Id >= 100 && Map.GetInstance().Objects[newX][newY].Id < 200)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

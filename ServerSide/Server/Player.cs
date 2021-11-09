@@ -9,7 +9,7 @@ namespace Server
         public int Id { get; set; }
         private string username;
         private bool isAlive;
-        private int lives;
+        private int lives = 3;
         public String color;
         private Socket socket;
         public int X { get; set; }
@@ -31,6 +31,11 @@ namespace Server
             Y = rnd.Next(0, map.Objects[X].Length);
             map.Objects[X][Y].Id = id;
             map.Objects[X][Y].isSolid = true;
+        }
+
+        public Player()
+        {
+
         }
 
         public string GetUsername()
@@ -111,6 +116,24 @@ namespace Server
         private void HandleMapUpdated(string data)
         {
             SendMessage("map_" + data);
+        }
+
+        public void HandleDamage()
+        {
+            lives--;
+            Event takeDamage = new Event("takeDamage", this.lives.ToString());
+            SendMessage(takeDamage.Type + "_" + takeDamage.Data);
+            if (lives == 0)
+            {
+                for (int i = 0; i < 16; i++)
+                {
+                    for (int j = 0; j < 16; j++)
+                    {
+                        if (Map.GetInstance().Objects[i][j].Id == this.Id)
+                            Map.GetInstance().Objects[i][j] = new MapObject(0);
+                    }
+                }
+            }
         }
     }
 }

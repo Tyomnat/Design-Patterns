@@ -9,7 +9,7 @@ namespace Server
     class SlowAlgorithm : MoveAlgorithm
     {
         private bool canMove = false;
-        public override bool MoveDifferently(int x, int y, Map map, out int newX, out int newY)
+        public override string MoveDifferently(int x, int y, Map map, out int newX, out int newY)
         {
             canMove = !canMove;
             newX = x;
@@ -22,6 +22,11 @@ namespace Server
                 int randInt = 0;
                 newX = x;
                 newY = y;
+
+                if (isNearPlayer(x, y))
+                {
+                    return "attacking";
+                }
 
                 while (checkedNumbers.Count != 4)
                 {
@@ -68,16 +73,13 @@ namespace Server
                         {
                             HandlePickupItem(x, y, newX, newY);
                         }
-                        return true;
+                        return "moving";
                         //break;
                     }
                 }
             }
 
-            return canMove;
-
-
-
+            return "standing";
         }
     }
 }

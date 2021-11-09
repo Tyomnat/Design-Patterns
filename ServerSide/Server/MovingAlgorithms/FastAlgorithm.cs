@@ -9,7 +9,7 @@ namespace Server
     class FastAlgorithm : MoveAlgorithm
     {
 
-        public override bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
+        public override string MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
         {
             newX = x;
             newY = y;
@@ -20,6 +20,11 @@ namespace Server
             int randInt = 0;
             newX = x;
             newY = y;
+            
+            if (isNearPlayer(x, y))
+            {
+                return "attacking";
+            }
 
             while (checkedNumbers.Count != 4)
             {
@@ -66,7 +71,7 @@ namespace Server
                     {
                         HandlePickupItem(x, y, newX, newY);
                     }
-                    return true;
+                    return "moving";
                     //break;
                 }
                 else
@@ -77,7 +82,7 @@ namespace Server
 
             }
 
-            return false;
+            return "standing";
         }
 
         private bool isBetweenBlock(int newX, int newY, Map Map, int randInt)

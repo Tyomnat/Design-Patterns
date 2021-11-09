@@ -9,7 +9,8 @@ namespace Server
     class GhostAlgorithm : MoveAlgorithm
     {
         private bool isOnWall = false;
-        public override bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
+
+        public override string MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
         {
             List<int> checkedNumbers = new List<int>();
             Random rnd = new Random();
@@ -17,12 +18,18 @@ namespace Server
             newX = x;
             newY = y;
 
+            if(isNearPlayer(x, y))
+            {
+                return "attacking";
+            }
+
             while (checkedNumbers.Count != 4)
             {
 
                 newX = x;
                 newY = y;
                 randInt = rnd.Next(1, 5);
+
                 if (checkedNumbers.Contains(randInt))
                 {
                     continue;
@@ -78,14 +85,12 @@ namespace Server
                         HandlePickupItem(x, y, newX, newY);
                     }
 
-                    return true;
+                    return "moving";
                     //break;
                 }
 
             }
-            return false;
-
-
+            return "standing";
         }
     }
 }

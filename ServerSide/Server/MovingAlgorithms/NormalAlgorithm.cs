@@ -8,13 +8,18 @@ namespace Server
 {
     class NormalAlgorithm : MoveAlgorithm
     {
-        public override bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
+        public override string MoveDifferently(int x, int y, Map Map, out int newX, out int newY)
         {
             List<int> checkedNumbers = new List<int>();
             Random rnd = new Random();
             int randInt = 0;
             newX = x;
             newY = y;
+
+            if (isNearPlayer(x, y))
+            {
+                return "attacking";
+            }
 
             while (checkedNumbers.Count != 4)
             {
@@ -61,14 +66,12 @@ namespace Server
                     {
                         HandlePickupItem(x, y, newX, newY);
                     }
-                    return true;
+                    return "moving";
                     //break;
                 }
 
             }
-            return false;
-
-
+            return "standing";
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Server.Enemies;
 
 namespace Server
@@ -8,17 +9,19 @@ namespace Server
         MoveAlgorithm MoveAlgorithm;
 
         public int Id;
-        string State;
+        int lives;
+        public string State;
         string Type;
         int initialX;
         int initialY;
 
-        public abstract void Attack();
+        public abstract void Attack(int AIx, int AIy, List<Player> players);
 
-        public Enemy(int Id, string Type, Map map)
+        public Enemy(int Id, string Type, Map map, int lives)
         {
             this.Id = Id;
             this.Type = Type;
+            this.lives = lives;
             SetPosition(map);
         }
 
@@ -27,7 +30,7 @@ namespace Server
             return MoveAlgorithm;
         }
 
-        public bool executeAlgorithm(int x, int y, Map map, out int newX, out int newY)
+        public string executeAlgorithm(int x, int y, Map map, out int newX, out int newY)
         {
             return this.MoveAlgorithm.MoveDifferently(x, y, map, out newX, out newY);
         }
@@ -76,6 +79,49 @@ namespace Server
 
             map.Objects[X][Y].Id = Id;
             map.Objects[X][Y].isSolid = true;
+        }
+
+        public Player FindPlayer(int AIx, int AIy, List<Player> players)
+        {
+            int plX = 0, plY = 0;
+            Player player = null;
+            for (int i = 0; i < 4; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        plX = AIx;
+                        plY = AIy - 1;
+                        player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
+                        if (player != null)
+                            return player;
+                        break;
+                    case 1:
+                        plX = AIx;
+                        plY = AIy + 1;
+                        player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
+                        if (player != null)
+                            return player;
+                        break;
+                    case 2:
+                        plX = AIx - 1;
+                        plY = AIy;
+                        player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
+                        if (player != null)
+                            return player;
+                        break;
+                    case 3:
+                        plX = AIx + 1;
+                        plY = AIy;
+                        player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
+                        if (player != null)
+                            return player;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return player;
         }
     }
 }

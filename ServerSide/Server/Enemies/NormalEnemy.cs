@@ -8,12 +8,17 @@ namespace Server
 {
     class NormalEnemy : Enemy
     {
-        public override void Attack()
+        public override void Attack(int AIx, int AIy, List<Player> players)
         {
-            throw new NotImplementedException();
+            Player player = FindPlayer(AIx, AIy, players);
+            if (player != null)
+            {
+                player.HandleDamage();
+                this.State = "standing";
+            }
         }
 
-        public NormalEnemy(int Id, Map map) : base(Id, "normal", map)
+        public NormalEnemy(int Id, Map map) : base(Id, "normal", map, 2)
         {
             //
         }

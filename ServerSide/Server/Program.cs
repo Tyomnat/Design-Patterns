@@ -360,20 +360,26 @@ namespace Server
             {
                 int newX;
                 int newY;
-                bool canMove = enemy.executeAlgorithm(x, y, Map.GetInstance(), out newX, out newY);
-                if (canMove)
+                enemy.State = enemy.executeAlgorithm(x, y, Map.GetInstance(), out newX, out newY);
+
+                switch (enemy.State)
                 {
-                    Map.GetInstance().Objects[newX][newY] = new MapObject(Map.GetInstance().Objects[newX][newY].X, Map.GetInstance().Objects[newX][newY].Y, id, true);
+                    case "moving":
+                        Map.GetInstance().Objects[newX][newY] = new MapObject(Map.GetInstance().Objects[newX][newY].X, Map.GetInstance().Objects[newX][newY].Y, id, true);
 
-                    if ((!PickupItemsIds.Contains(Map.GetInstance().Objects[x][y].Id) && !PowerupsIds.Contains(Map.GetInstance().Objects[x][y].Id)) &&
-                        Map.GetInstance().Objects[x][y].Id != 1)
-                    {
-                        Map.GetInstance().Objects[x][y] = new MapObject(Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
-                    }
+                        if ((!PickupItemsIds.Contains(Map.GetInstance().Objects[x][y].Id) && !PowerupsIds.Contains(Map.GetInstance().Objects[x][y].Id)) &&
+                            Map.GetInstance().Objects[x][y].Id != 1)
+                        {
+                            Map.GetInstance().Objects[x][y] = new MapObject(Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
+                        }
+                        return;
+                    case "attacking":
+                        enemy.Attack(x, y, players);
+                        return;
+                    default:
+                        return;
                 }
-                return;
             }
-
         }
 
         /// <summary>
