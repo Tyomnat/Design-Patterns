@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using Newtonsoft.Json;
 using Server.PointItems;
+using Server.Powerups;
 
 namespace Server
 {
@@ -29,6 +30,8 @@ namespace Server
         private static List<Enemy> enemies = new List<Enemy>();
         private static PlayerController playerController = new PlayerController();
         private static List<int> PickupItemsIds = new List<int>() { 500, 501 };
+        private static List<int> PowerupsIds = new List<int>() { 502, 503, 504 };
+
         private static List<PlayerScore> PlayerScores = new List<PlayerScore>();
         private static readonly object EnemyListLock = new object();
 
@@ -114,6 +117,29 @@ namespace Server
                 });
                 thread.Start(rnd);
             }
+            new Rocket(Map.GetInstance());
+            new Shield(Map.GetInstance());
+            new SpeedBoost(Map.GetInstance());
+            //rnd = new Random();
+            //for (int i = 0; i < 3; i++)
+            //{
+
+            //    Thread thread = new Thread((rnd) =>
+            //    {
+            //        int rn = (rnd as Random).Next(1, 6);
+            //        if (rn >= 1 && rn < 3)
+            //        {
+
+            //        }
+            //        Cherry cherry = new Cherry(Map.GetInstance());
+
+            //        rn = (rnd as Random).Next(1, 6);
+            //        Apple apple = new Apple(Map.GetInstance());
+            //    });
+            //    thread.Start(rnd);
+            //}
+
+
 
             foreach (var pl in players)
             {
@@ -332,11 +358,11 @@ namespace Server
                 {
                     Map.GetInstance().Objects[newX][newY] = new MapObject(Map.GetInstance().Objects[newX][newY].X, Map.GetInstance().Objects[newX][newY].Y, id, true);
 
-                    if (!PickupItemsIds.Contains(Map.GetInstance().Objects[x][y].Id) && Map.GetInstance().Objects[x][y].Id != 1)
+                    if ((!PickupItemsIds.Contains(Map.GetInstance().Objects[x][y].Id) && !PowerupsIds.Contains(Map.GetInstance().Objects[x][y].Id)) &&
+                        Map.GetInstance().Objects[x][y].Id != 1)
                     {
                         Map.GetInstance().Objects[x][y] = new MapObject(Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
                     }
-
                 }
                 return;
             }
@@ -397,6 +423,14 @@ namespace Server
                         player.SendMessage("point_item_pickup" + pi.Play() + "eventend");
                     }
 
+                }
+            }
+            if (PowerupsIds.Contains(Map.GetInstance().Objects[newX][newY].Id))
+            {
+                Powerup powerup = (Map.GetInstance().Objects[newX][newY] as Powerup);
+                if (powerup != null)
+                {
+                    player.SendMessage("powerup_pickup" + powerup.Type + "eventend");
                 }
             }
             // Move player to the new location

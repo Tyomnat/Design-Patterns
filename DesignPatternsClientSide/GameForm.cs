@@ -195,9 +195,48 @@ namespace DesignPatternsClientSide
                         {
                             e.Graphics.FillEllipse(Brushes.GreenYellow, Map.Objects[i][j].X + 6, Map.Objects[i][j].Y + 6, 20, 20);
                         }
+                        else if (Map.Objects[i][j].Id == 502)//rocket
+                        {
+                            DrawSprite(e, "rocket", Map.Objects[i][j].X, Map.Objects[i][j].Y);
+                        }
+                        else if (Map.Objects[i][j].Id == 503)//speedBoost
+                        {
+                            DrawSprite(e, "speedBoost", Map.Objects[i][j].X, Map.Objects[i][j].Y);
+                        }
+                        else if (Map.Objects[i][j].Id == 504)//shield
+                        {
+                            DrawSprite(e, "shield", Map.Objects[i][j].X, Map.Objects[i][j].Y);
+                        }
                     }
                 }
             }
+        }
+
+        private static void DrawSprite(PaintEventArgs e, string spriteName, int x, int y)
+        {
+            string spriteFileName = "";
+            switch (spriteName)
+            {
+                case "rocket":
+                    spriteFileName = "rocket";
+                    break;
+                case "speedBoost":
+                    spriteFileName = "speed";
+                    break;
+                case "shield":
+                    spriteFileName = "shield";
+                    break;
+                default:
+                    break;
+
+            }
+            if (spriteFileName != "")
+            {
+                string workingDirectory = Environment.CurrentDirectory;
+                string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+                e.Graphics.DrawImage(new Bitmap(projectDirectory + "/sprites/" + spriteFileName + ".png"), x, y, 32, 32);
+            }
+
         }
 
         /// <summary>
