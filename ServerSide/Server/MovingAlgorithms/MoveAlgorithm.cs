@@ -15,7 +15,7 @@ namespace Server
         protected bool IsOnPickupItem = false;
         protected Type PickupType;
         protected int OnPickupItemId;
-        protected List<int> PickupItemsIds = new List<int>() { 500, 501, 502, 503, 504 };//pickup and power up items
+        protected List<int> PickupItemsIds = new List<int>() { 500, 501, 502, 503, 504 }; // Pickup and power up items
 
         public abstract bool MoveDifferently(int x, int y, Map Map, out int newX, out int newY);
 
@@ -54,23 +54,23 @@ namespace Server
 
         protected void HandlePickupItemType(int x, int y)
         {
-            if (PickupType == typeof(Apple))//any new pickup type must be added here
+            if (PickupType == typeof(Apple)) // Any new pickup type must be added here
             {
                 Map.GetInstance().Objects[x][y] = StandingOnItem as Apple;
             }
-            if (PickupType == typeof(Cherry))
+            else if (PickupType == typeof(Cherry))
             {
                 Map.GetInstance().Objects[x][y] = StandingOnItem as Cherry;
             }
-            if (PickupType == typeof(Rocket))
+            else if (PickupType == typeof(Rocket))
             {
                 Map.GetInstance().Objects[x][y] = StandingOnPowerup as Rocket;
             }
-            if (PickupType == typeof(Shield))
+            else if (PickupType == typeof(Shield))
             {
                 Map.GetInstance().Objects[x][y] = StandingOnPowerup as Shield;
             }
-            if (PickupType == typeof(SpeedBoost))
+            else if (PickupType == typeof(SpeedBoost))
             {
                 Map.GetInstance().Objects[x][y] = StandingOnPowerup as SpeedBoost;
             }

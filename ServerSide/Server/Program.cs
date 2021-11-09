@@ -71,15 +71,22 @@ namespace Server
                 thread.Start();
 
             }
-            for (int i = 0; i < 1; i++)
+
+            Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_SLOW), Map.GetInstance());
+            enemy.SetAlgorithm(new SlowAlgorithm());
+            AddToEnemyListThreadSafe(enemy);
+
+            for (int i = 0; i < 2; i++)
             {
-                Thread thread = new Thread(() =>
+                Thread thread = new Thread((enemy) =>
                 {
-                    Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_SLOW), Map.GetInstance());
-                    enemy.SetAlgorithm(new SlowAlgorithm());
-                    AddToEnemyListThreadSafe(enemy);
+                    Enemy enemyClone = (enemy as SlowEnemy).ShallowCopy();
+                    enemyClone.Id = GenerateGameObjectId(TYPE_ENEMY_SLOW);
+                    enemyClone.SetPosition(Map.GetInstance());
+                    enemyClone.SetAlgorithm(enemyClone.CloneMovementAlgorithm((enemy as SlowEnemy).GetAlgorithm()));
+                    AddToEnemyListThreadSafe(enemyClone);
                 });
-                thread.Start();
+                thread.Start(enemy);
             }
             for (int i = 0; i < 1; i++)
             {

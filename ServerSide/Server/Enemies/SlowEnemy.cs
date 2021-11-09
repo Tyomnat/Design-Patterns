@@ -15,6 +15,16 @@ namespace Server
 
         public SlowEnemy(int Id, Map Map) : base(Id, "slow", Map)
         {
+            //
+        }
+
+        override public SlowEnemy DeepCopy()
+        {
+            SlowEnemy clone = (SlowEnemy) this.MemberwiseClone();
+
+            clone.SetAlgorithm(CloneMovementAlgorithm(clone.GetAlgorithm()));
+
+            return clone;
         }
     }
 }

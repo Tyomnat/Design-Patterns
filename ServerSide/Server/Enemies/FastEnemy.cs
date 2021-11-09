@@ -15,6 +15,16 @@ namespace Server
 
         public FastEnemy(int Id, Map Map) : base(Id, "fast", Map)
         {
+            //
+        }
+
+        override public FastEnemy DeepCopy()
+        {
+            FastEnemy clone = (FastEnemy)this.MemberwiseClone();
+
+            clone.SetAlgorithm(new FastAlgorithm());
+
+            return clone;
         }
 
         //public FastEnemy(int Id, string Type)

@@ -15,6 +15,16 @@ namespace Server
 
         public NormalEnemy(int Id, Map map) : base(Id, "normal", map)
         {
+            //
+        }
+
+        override public NormalEnemy DeepCopy()
+        {
+            NormalEnemy clone = (NormalEnemy)this.MemberwiseClone();
+
+            clone.SetAlgorithm(new NormalAlgorithm());
+
+            return clone;
         }
     }
 }
