@@ -4,6 +4,8 @@ using Server.Powerups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,14 +24,18 @@ namespace Server
         private static List<int> mapObjectsIds = new List<int>();
         private static List<Enemy> enemies = new List<Enemy>();
         private static readonly object EnemyListLock = new object();        
+        private static readonly object IdListLock = new object();        
         private static PlayerController playerController = new PlayerController();
         private static List<int> PickupItemsIds = new List<int>() { 500, 501 };
         private static List<int> PowerupsIds = new List<int>() { 502, 503, 504 };
+        private static Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        private static List<Player> players = new List<Player>();
+        private static List<PlayerScore> PlayerScores = new List<PlayerScore>();
+        private static Subject Subject = new Subject();
 
 
-        public void GenerateAllEnemy()
+        public void GenerateAllEnemies()
         {
-            // Start Listening Thread for each player
             for (int i = 0; i < 1; i++)
             {
                 Thread thread = new Thread(() =>
@@ -80,6 +86,97 @@ namespace Server
             }
         }
 
+        public void AwaitPlayerConnections()
+        {
+            // Starts the server and awaits 2 client connections
+            serverSocket.Bind(new IPEndPoint(IPAddress.Any, 50));
+            serverSocket.Listen(10);
+            Parallel.Invoke(
+                () => serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null),
+                () => serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null));
+            Console.WriteLine("Server started. Waiting for 2 players");
+
+            // Forced wait for clients to join in
+            while (players.Count != 2)
+            {
+            }
+        }
+
+        public void StartGame()
+        {
+            foreach (var pl in players)
+            {
+                Thread thread = new Thread(() => PlayerCommunication(pl));
+                thread.Start();
+            }
+
+            // Start main Game thread which handles Map updates (all future game events as well probably)
+            Thread mainThread = new Thread(() => SendMapUpdate());
+            mainThread.Start();
+        }
+
+        /// <summary>
+        /// Receives client connection to the server;
+        /// Creates new player object and saves it into global player list;
+        /// Registers the player for Observer design pattern Subject object.
+        /// </summary>
+        /// <param name="AR"></param>
+        private static void AcceptCallback(IAsyncResult AR)
+        {
+            Socket clientSocket = serverSocket.EndAccept(AR);
+            Console.WriteLine("Connection received");
+
+            byte[] responseBuffer = new byte[1024];
+            clientSocket.Receive(responseBuffer);
+            string username = (players.Count + 1).ToString();
+            Console.WriteLine("player connected: " + username);
+            int id = GenerateGameObjectId(TYPE_PLAYER);
+            Player newPlayer = new Player(id, username, clientSocket, Map.GetInstance());
+            PlayerScore playerScore = new PlayerScore(id);
+            PlayerScores.Add(playerScore);
+            players.Add(newPlayer);
+            Subject.Register(newPlayer);
+        }
+
+        /// <summary>
+        /// Main Game Threaded function
+        /// </summary>
+        private static void SendMapUpdate()
+        {
+            // Kill while in the future on game end condition
+            while (true)
+            {
+                //byte[] messageBuffer = new byte[1024];
+                //player.GetSocket().Receive(messageBuffer);
+                //string message = Encoding.ASCII.GetString(messageBuffer);
+                //Console.WriteLine(player.GetUsername() + "_" + message);
+                //Event gameEvent = new Event("player_moved", "sdsd");
+                //Subject.Update(gameEvent);
+                //Console.WriteLine(JsonSerializer.Serialize(map.Objects));
+                //Console.ReadLine();
+
+                // Server timer forcing movement updates every 200ms
+                var t = Task.Factory.StartNew(() =>
+                {
+                    Task.Delay(200).Wait();
+                });
+                t.Wait();
+
+                //Function to run update to all map elements
+                UpdateMap();
+                var taskMapUpdate = Task.Factory.StartNew(() =>
+                {
+                    Event gameEvent = new Event("map_updated", JsonConvert.SerializeObject(Map.GetInstance()));
+                    Subject.Update(gameEvent);
+                });
+                taskMapUpdate.Wait();
+
+                Event playerScoresUpdatedEvent = new Event("scores_updated", JsonConvert.SerializeObject(PlayerScores));
+                Subject.Update(playerScoresUpdatedEvent);
+
+            }
+        }
+
 
 
         public void GenerateItems()
@@ -103,26 +200,6 @@ namespace Server
             new Rocket(Map.GetInstance());
             new Shield(Map.GetInstance());
             new SpeedBoost(Map.GetInstance());
-
-
-            //rnd = new Random();
-            //for (int i = 0; i < 3; i++)
-            //{
-
-            //    Thread thread = new Thread((rnd) =>
-            //    {
-            //        int rn = (rnd as Random).Next(1, 6);
-            //        if (rn >= 1 && rn < 3)
-            //        {
-
-            //        }
-            //        Cherry cherry = new Cherry(Map.GetInstance());
-
-            //        rn = (rnd as Random).Next(1, 6);
-            //        Apple apple = new Apple(Map.GetInstance());
-            //    });
-            //    thread.Start(rnd);
-            //}
         }
 
 
@@ -151,13 +228,21 @@ namespace Server
             }
         }
 
+        public static void AddIdToListThreadSafe(int id)
+        {
+            lock (IdListLock)
+            {
+                mapObjectsIds.Add(id);
+            }
+        }
+
 
         /// <summary>
         /// Generate an ID for players (100; 200)
         /// First player is always given ID 100.
         /// </summary>
         /// <returns>Player ID</returns>
-        public int GenerateGameObjectId(string Type)
+        public static int GenerateGameObjectId(string Type)
         {
             Random rnd = new Random();
             int randInt = 0;
@@ -196,7 +281,7 @@ namespace Server
             {
                 randInt = rnd.Next(lowerB, upperB);
             }
-            mapObjectsIds.Add(randInt);
+            AddIdToListThreadSafe(randInt);
             return randInt;
         }
 
@@ -230,7 +315,7 @@ namespace Server
         /// <summary>
         /// Map update function
         /// </summary>
-        public void UpdateMap(List<Player> players, List<PlayerScore> playerScores)
+        private static void UpdateMap()
         {
             List<int> movedIds = new List<int>();
 
@@ -245,12 +330,12 @@ namespace Server
                     {
                         // Making sure not to move the same ID more than once
                         movedIds.Add(Map.GetInstance().Objects[i][j].Id);
-                        HandlePlayerMovement(Map.GetInstance().Objects[i][j].Id, i, j, players, playerScores);
+                        HandlePlayerMovement(Map.GetInstance().Objects[i][j].Id, i, j);
                     }
                     else if (Map.GetInstance().Objects[i][j].Id >= 200 && Map.GetInstance().Objects[i][j].Id < 280 && !movedIds.Contains(Map.GetInstance().Objects[i][j].Id))
                     {
                         movedIds.Add(Map.GetInstance().Objects[i][j].Id);
-                        HandleEnemyMovement(Map.GetInstance().Objects[i][j].Id, i, j, players);
+                        HandleEnemyMovement(Map.GetInstance().Objects[i][j].Id, i, j);
                     }
                     // AIs ?
                 }
@@ -258,7 +343,7 @@ namespace Server
         }
 
 
-        public void HandleEnemyMovement(int id, int x, int y, List<Player> players)
+        public static void HandleEnemyMovement(int id, int x, int y)
         {
             Enemy enemy = enemies.Find(E => E.Id == id);
             if (enemy != null)
@@ -293,7 +378,7 @@ namespace Server
         /// <param name="id">Player ID</param>
         /// <param name="x">Current player X coordinate according to MapObjects array</param>
         /// <param name="y">Current player Y coordinate according to MapObjects array</param>
-        public void HandlePlayerMovement(int id, int x, int y, List<Player> players, List<PlayerScore> playerScores)
+        public static void HandlePlayerMovement(int id, int x, int y)
         {
             // Get the appropriate player
             Player player = players.Find(P => P.Id == id);
@@ -331,7 +416,7 @@ namespace Server
 
             if (PickupItemsIds.Contains(Map.GetInstance().Objects[newX][newY].Id))
             {
-                PlayerScore ps = playerScores.Find(PS => PS.PlayerId == player.Id);
+                PlayerScore ps = PlayerScores.Find(PS => PS.PlayerId == player.Id);
                 if (ps != null)
                 {
                     PointItem pi = (Map.GetInstance().Objects[newX][newY] as PointItem);

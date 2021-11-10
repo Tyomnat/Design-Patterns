@@ -92,36 +92,63 @@ namespace Server
                     case 0:
                         plX = AIx;
                         plY = AIy - 1;
-                        player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
-                        if (player != null)
-                            return player;
+                        if (inBounds(plX, plY))
+                        {
+                            player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
+                            if (player != null)
+                                return player;
+                        }
                         break;
                     case 1:
                         plX = AIx;
                         plY = AIy + 1;
-                        player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
-                        if (player != null)
-                            return player;
+                        if (inBounds(plX, plY))
+                        {
+                            player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
+                            if (player != null)
+                                return player;
+                        }
                         break;
                     case 2:
                         plX = AIx - 1;
                         plY = AIy;
-                        player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
-                        if (player != null)
-                            return player;
+                        if (inBounds(plX, plY))
+                        {
+                            player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
+                            if (player != null)
+                                return player;
+                        }
                         break;
                     case 3:
                         plX = AIx + 1;
                         plY = AIy;
-                        player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
-                        if (player != null)
-                            return player;
+                        if (inBounds(plX, plY))
+                        {
+                            player = players.Find(P => P.Id == Map.GetInstance().Objects[plX][plY].Id);
+                            if (player != null)
+                                return player;
+                        }
                         break;
                     default:
                         break;
                 }
             }
             return player;
+        }
+
+        private bool inBounds(int x, int y)
+        {
+            if (
+                x < 0 ||
+                x > Map.GetInstance().Objects.GetLength(0) - 1 ||
+                y < 0 ||
+                y > Map.GetInstance().Objects[y].Length - 1)
+            {
+                return false;
+            } else
+            {
+                return true;
+            }
         }
     }
 }
