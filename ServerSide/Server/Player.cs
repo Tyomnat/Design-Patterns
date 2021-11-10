@@ -130,7 +130,7 @@ namespace Server
                     for (int j = 0; j < 16; j++)
                     {
                         if (Map.GetInstance().Objects[i][j].Id == this.Id)
-                            Map.GetInstance().Objects[i][j] = new MapObject(0);
+                            Map.GetInstance().Objects[i][j] = new MapObject(Map.GetInstance().Objects[i][j].X, Map.GetInstance().Objects[i][j].Y);
                     }
                 }
             }

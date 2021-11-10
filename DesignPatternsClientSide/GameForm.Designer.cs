@@ -43,7 +43,7 @@ namespace DesignPatternsClientSide
             // lives
             // 
             this.lives.AutoSize = true;
-            this.lives.BackColor = System.Drawing.SystemColors.Control;
+            this.lives.BackColor = System.Drawing.Color.Transparent;
             this.lives.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lives.Location = new System.Drawing.Point(13, 13);
             this.lives.Name = "lives";
@@ -52,18 +52,16 @@ namespace DesignPatternsClientSide
             // 
             // gameOver
             // 
-            this.gameOver.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gameOver.AutoSize = true;
-            this.gameOver.BackColor = System.Drawing.SystemColors.Control;
-            this.gameOver.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.gameOver.BackColor = System.Drawing.Color.Transparent;
+            this.gameOver.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gameOver.Font = new System.Drawing.Font("Segoe UI", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.gameOver.ForeColor = System.Drawing.Color.Red;
-            this.gameOver.Location = new System.Drawing.Point(31, 153);
+            this.gameOver.Location = new System.Drawing.Point(0, 0);
             this.gameOver.Name = "gameOver";
-            this.gameOver.Size = new System.Drawing.Size(404, 89);
+            this.gameOver.Size = new System.Drawing.Size(474, 402);
             this.gameOver.TabIndex = 1;
             this.gameOver.Text = "GAME OVER";
+            this.gameOver.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.gameOver.Visible = false;
             // 
             // GameForm
