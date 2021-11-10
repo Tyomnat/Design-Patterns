@@ -21,7 +21,7 @@ namespace Server
             newX = x;
             newY = y;
             
-            if (isNearPlayer(x, y))
+            if (rnd.Next(1, 100) <= 10)
             {
                 return "attacking";
             }

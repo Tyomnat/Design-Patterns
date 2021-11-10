@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.Enemies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,14 +9,11 @@ namespace Server
 {
     class SlowEnemy : Enemy
     {
-        public override void Attack(int AIx, int AIy, List<Player> players)
+        public override bool Attack(int AIx, int AIy, List<Player> players, AttackType attackType, out string dir)
         {
-            Player player = FindPlayer(AIx, AIy, players);
-            if (player != null)
-            {
-                player.HandleDamage();
-                this.State = "standing";
-            }
+            this.attackType = attackType;
+            this.State = "standing";
+            return attackType.Attack(AIx, AIy, players, out dir);
         }
 
         public SlowEnemy(int Id, Map Map) : base(Id, "slow", Map, 2)

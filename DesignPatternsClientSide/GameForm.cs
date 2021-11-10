@@ -220,6 +220,10 @@ namespace DesignPatternsClientSide
                         {
                             DrawSprite(e, "shield", Map.Objects[i][j].X, Map.Objects[i][j].Y);
                         }
+                        else if (Map.Objects[i][j].Id >= 1000)//enemy shot
+                        {
+                            e.Graphics.FillEllipse(Brushes.Black, Map.Objects[i][j].X + 8, Map.Objects[i][j].Y + 8, 16, 16);
+                        }
                     }
                 }
             }
