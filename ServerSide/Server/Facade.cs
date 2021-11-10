@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Server.Enemies;
 using Server.PointItems;
 using Server.Powerups;
 using System;
@@ -19,7 +20,7 @@ namespace Server
         const string TYPE_ENEMY_SLOW = "enemy_slow";
         const string TYPE_ENEMY_NORMAL = "enemy_normal";
         const string TYPE_ENEMY_GHOST = "enemy_ghost";
-
+        const string TYPE_ENEMY_SHOT = "enemy_shot";
 
         private static List<int> mapObjectsIds = new List<int>();
         private static List<Enemy> enemies = new List<Enemy>();
@@ -275,6 +276,11 @@ namespace Server
                     lowerB = 261;
                     upperB = 280;
                     break;
+                case TYPE_ENEMY_SHOT:
+                    randInt = 1000;
+                    lowerB = 1001;
+                    upperB = 2000;
+                    break;
 
             }
             while (mapObjectsIds.Contains(randInt))
@@ -331,14 +337,69 @@ namespace Server
                         // Making sure not to move the same ID more than once
                         movedIds.Add(Map.GetInstance().Objects[i][j].Id);
                         HandlePlayerMovement(Map.GetInstance().Objects[i][j].Id, i, j);
-                    }
+                    } // Enemies
                     else if (Map.GetInstance().Objects[i][j].Id >= 200 && Map.GetInstance().Objects[i][j].Id < 280 && !movedIds.Contains(Map.GetInstance().Objects[i][j].Id))
                     {
                         movedIds.Add(Map.GetInstance().Objects[i][j].Id);
                         HandleEnemyMovement(Map.GetInstance().Objects[i][j].Id, i, j);
+                    } // Enemy shot
+                    else if (Map.GetInstance().Objects[i][j].Id >= 1000)
+                    {
+                        movedIds.Add(Map.GetInstance().Objects[i][j].Id);
+                        HandleEnemyShot((Map.GetInstance().Objects[i][j] as EnemyAttackFire), i, j);
                     }
-                    // AIs ?
                 }
+            }
+        }
+
+        public static void HandleEnemyShot(EnemyAttackFire shot, int x, int y)
+        {
+            int newX = 0, newY = 0;
+            Map map = Map.GetInstance();
+            switch (shot.direction)
+            {
+                case "Up":
+                    newY = y + 1;
+                    newX = x;
+                    break;
+                case "Down":
+                    newY = y - 1;
+                    newX = x;
+                    break;
+                case "Left":
+                    newY = y;
+                    newX = x - 1;
+                    break;
+                case "Right":
+                    newY = y;
+                    newX = x + 1;
+                    break;
+            }
+
+            //Out of bounds
+            if (
+                newX < 0 ||
+                newX > map.Objects.GetLength(0) - 1 ||
+                newY < 0 ||
+                newY > map.Objects[newX].Length - 1)
+            {
+                map.Objects[x][y] = new MapObject(map.Objects[x][y].X, map.Objects[x][y].Y);
+            }
+            else if (map.Objects[newX][newY].Id >= 100 && map.Objects[newX][newY].Id < 200)
+            { //Player 
+                Player player = players.Find(P => P.Id == map.Objects[newX][newY].Id);
+                player.HandleDamage();
+                map.Objects[x][y] = new MapObject(map.Objects[x][y].X, map.Objects[x][y].Y);
+            }
+            else if (map.Objects[newX][newY].Id > 0)
+            { // Anything except players
+                map.Objects[x][y] = new MapObject(map.Objects[x][y].X, map.Objects[x][y].Y);
+            }
+            else if (map.Objects[newX][newY].Id == 0)
+            { // Empty
+                Map.GetInstance().Objects[newX][newY] = new EnemyAttackFire(shot.direction, Map.GetInstance().Objects[newX][newY].X, Map.GetInstance().Objects[newX][newY].Y, shot.Id);
+
+                Map.GetInstance().Objects[x][y] = new MapObject(Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
             }
         }
 
@@ -364,7 +425,46 @@ namespace Server
                         }
                         return;
                     case "attacking":
-                        enemy.Attack(x, y, players);
+                        string dir = "";
+                        if (enemy.GetAlgorithm().GetType() == typeof(GhostAlgorithm) || enemy.GetAlgorithm().GetType() == typeof(SlowAlgorithm)) {
+                            enemy.Attack(x, y, players, new AdapterMeleeAttack(new AttackMelee()), out dir);
+                        } else if (enemy.GetAlgorithm().GetType() == typeof(NormalAlgorithm) || enemy.GetAlgorithm().GetType() == typeof(FastAlgorithm)) {
+                            if (enemy.Attack(x, y, players, new AdapterRangeAttack(new AttackRange()), out dir))
+                            {
+                                int shotX=0, shotY=0;
+                                switch (dir)
+                                {
+                                    case "Up":
+                                        shotY = y + 1;
+                                        shotX = x;
+                                        break;
+                                    case "Down":
+                                        shotY = y - 1;
+                                        shotX = x;
+                                        break;
+                                    case "Left":
+                                        shotY = y;
+                                        shotX = x - 1;
+                                        break;
+                                    case "Right":
+                                        shotY = y;
+                                        shotX = x + 1;
+                                        break;
+                                }
+                                if (
+                                    shotX < 0 ||
+                                    shotX > Map.GetInstance().Objects.GetLength(0) - 1 ||
+                                    shotY < 0 ||
+                                    shotY > Map.GetInstance().Objects[shotX].Length - 1)
+                                {
+                                    return;
+                                } else {
+                                    Map.GetInstance().Objects[shotX][shotY] = new EnemyAttackFire(dir, Map.GetInstance().Objects[shotX][shotY].X, Map.GetInstance().Objects[shotX][shotY].Y, GenerateGameObjectId(TYPE_ENEMY_SHOT));
+                                }
+                            }
+                        } else {
+                            return;
+                        }
                         return;
                     default:
                         return;
