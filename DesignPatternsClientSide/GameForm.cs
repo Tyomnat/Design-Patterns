@@ -102,7 +102,7 @@ namespace DesignPatternsClientSide
                     {
                         player.Id = int.Parse(message.Split(":")[1]);
                         player.Lives = 3;
-                        
+
                     }
                     else if (message.Contains("point_item_pickup"))
                     {
@@ -158,7 +158,8 @@ namespace DesignPatternsClientSide
         {
             if (player.Lives > 0)
                 lives.Text = "Lives: " + player.Lives.ToString();
-            else{
+            else
+            {
                 lives.Visible = false;
                 gameOver.Visible = true;
             }
@@ -283,6 +284,10 @@ namespace DesignPatternsClientSide
             else if (e.KeyCode == Keys.Z)
             {
                 SendMessage("Undo");
+            }
+            else if (e.KeyCode == Keys.M)
+            {
+                SendMessage("memento");
             }
         }
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Server
 {
-    class Player : IObserver
+    class Player : IObserver, IOriginator<Player>
     {
         public int Id { get; set; }
         private string username;
@@ -14,11 +14,16 @@ namespace Server
         private Socket socket;
         public int X { get; set; }
         public int Y { get; set; }
+
+        //private Player State;
+
         private enum Direction
         {
             Left, Right, Up, Down
         }
         private Direction direction;
+
+        public Caretaker<Player> Caretaker;
 
         public Player(int id, string username, Socket socket, Map map)
         {
@@ -31,6 +36,14 @@ namespace Server
             Y = rnd.Next(0, map.Objects[X].Length);
             map.Objects[X][Y].Id = id;
             map.Objects[X][Y].isSolid = true;
+
+            this.Caretaker = new Caretaker<Player>(this);
+        }
+
+        private Player(int x, int y)
+        {
+            X = x;
+            Y = y;
         }
 
         public Player()
@@ -134,6 +147,26 @@ namespace Server
                     }
                 }
             }
+        }
+
+        public Memento<Player> CreateMemento()
+        {
+            // Create memento and set state to current state.
+            var memento = new Memento<Player>(new Player(X, Y));
+
+            return memento;
+        }
+
+        public void SetMemento(Memento<Player> memento)
+        {
+
+            Map.GetInstance().Objects[X][Y] = new MapObject(Map.GetInstance().Objects[X][Y].X, Map.GetInstance().Objects[X][Y].Y);
+
+            this.X = memento.State.X;
+            this.Y = memento.State.Y;
+            Map.GetInstance().Objects[X][Y].Id = Id;
+            Map.GetInstance().Objects[X][Y].isSolid = true;
+
         }
     }
 }
