@@ -15,7 +15,7 @@ namespace Server
     class Program
     {
         private static Facade facade = new Facade();
-                
+
         static void Main(string[] args)
         {
             StartServer();
@@ -26,7 +26,7 @@ namespace Server
         /// </summary>
         private static void StartServer()
         {
-            
+
             facade.GenerateAllEnemies();
             facade.GenerateItems();
             facade.AwaitPlayerConnections();

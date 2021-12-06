@@ -24,8 +24,8 @@ namespace Server
 
         private static List<int> mapObjectsIds = new List<int>();
         private static List<Enemy> enemies = new List<Enemy>();
-        private static readonly object EnemyListLock = new object();        
-        private static readonly object IdListLock = new object();        
+        private static readonly object EnemyListLock = new object();
+        private static readonly object IdListLock = new object();
         private static PlayerController playerController = new PlayerController();
         private static List<int> PickupItemsIds = new List<int>() { 500, 501 };
         private static List<int> PowerupsIds = new List<int>() { 502, 503, 504 };
@@ -37,54 +37,54 @@ namespace Server
 
         public void GenerateAllEnemies()
         {
-            for (int i = 0; i < 1; i++)
-            {
-                Thread thread = new Thread(() =>
-                {
-                    Enemy enemy = new NormalEnemy(GenerateGameObjectId(TYPE_ENEMY_NORMAL), Map.GetInstance());
-                    enemy.SetAlgorithm(new NormalAlgorithm());
-                    AddToEnemyListThreadSafe(enemy);
-                });
-                thread.Start();
+            //for (int i = 0; i < 1; i++)
+            //{
+            //    Thread thread = new Thread(() =>
+            //    {
+            //        Enemy enemy = new NormalEnemy(GenerateGameObjectId(TYPE_ENEMY_NORMAL), Map.GetInstance());
+            //        enemy.SetAlgorithm(new NormalAlgorithm());
+            //        AddToEnemyListThreadSafe(enemy);
+            //    });
+            //    thread.Start();
 
-            }
+            //}
 
-            Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_SLOW), Map.GetInstance());
-            enemy.SetAlgorithm(new SlowAlgorithm());
-            AddToEnemyListThreadSafe(enemy);
+            //Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_SLOW), Map.GetInstance());
+            //enemy.SetAlgorithm(new SlowAlgorithm());
+            //AddToEnemyListThreadSafe(enemy);
 
-            for (int i = 0; i < 2; i++)
-            {
-                Thread thread = new Thread((enemy) =>
-                {
-                    Enemy enemyClone = (enemy as SlowEnemy).ShallowCopy();
-                    enemyClone.Id = GenerateGameObjectId(TYPE_ENEMY_SLOW);
-                    enemyClone.SetPosition(Map.GetInstance());
-                    enemyClone.SetAlgorithm(enemyClone.CloneMovementAlgorithm((enemy as SlowEnemy).GetAlgorithm()));
-                    AddToEnemyListThreadSafe(enemyClone);
-                });
-                thread.Start(enemy);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                Thread thread = new Thread(() =>
-                {
-                    Enemy enemy = new FastEnemy(GenerateGameObjectId(TYPE_ENEMY_FAST), Map.GetInstance());
-                    enemy.SetAlgorithm(new FastAlgorithm());
-                    AddToEnemyListThreadSafe(enemy);
-                });
-                thread.Start();
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                Thread thread = new Thread(() =>
-                {
-                    Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_GHOST), Map.GetInstance());
-                    enemy.SetAlgorithm(new GhostAlgorithm());
-                    AddToEnemyListThreadSafe(enemy);
-                });
-                thread.Start();
-            }
+            //for (int i = 0; i < 2; i++)
+            //{
+            //    Thread thread = new Thread((enemy) =>
+            //    {
+            //        Enemy enemyClone = (enemy as SlowEnemy).ShallowCopy();
+            //        enemyClone.Id = GenerateGameObjectId(TYPE_ENEMY_SLOW);
+            //        enemyClone.SetPosition(Map.GetInstance());
+            //        enemyClone.SetAlgorithm(enemyClone.CloneMovementAlgorithm((enemy as SlowEnemy).GetAlgorithm()));
+            //        AddToEnemyListThreadSafe(enemyClone);
+            //    });
+            //    thread.Start(enemy);
+            //}
+            //for (int i = 0; i < 1; i++)
+            //{
+            //    Thread thread = new Thread(() =>
+            //    {
+            //        Enemy enemy = new FastEnemy(GenerateGameObjectId(TYPE_ENEMY_FAST), Map.GetInstance());
+            //        enemy.SetAlgorithm(new FastAlgorithm());
+            //        AddToEnemyListThreadSafe(enemy);
+            //    });
+            //    thread.Start();
+            //}
+            //for (int i = 0; i < 1; i++)
+            //{
+            //    Thread thread = new Thread(() =>
+            //    {
+            //        Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_GHOST), Map.GetInstance());
+            //        enemy.SetAlgorithm(new GhostAlgorithm());
+            //        AddToEnemyListThreadSafe(enemy);
+            //    });
+            //    thread.Start();
+            //}
         }
 
         public void AwaitPlayerConnections()
@@ -309,6 +309,10 @@ namespace Server
                 {
                     playerController.Undo();
                 }
+                else if (message == "memento")
+                {
+                    player.Caretaker.Restore(4);
+                }
                 else
                 {
                     ICommand command = CommandFactory.GetCommand(message, player);
@@ -317,7 +321,7 @@ namespace Server
             }
         }
 
- 
+
         /// <summary>
         /// Map update function
         /// </summary>
@@ -426,12 +430,15 @@ namespace Server
                         return;
                     case "attacking":
                         string dir = "";
-                        if (enemy.GetAlgorithm().GetType() == typeof(GhostAlgorithm) || enemy.GetAlgorithm().GetType() == typeof(SlowAlgorithm)) {
+                        if (enemy.GetAlgorithm().GetType() == typeof(GhostAlgorithm) || enemy.GetAlgorithm().GetType() == typeof(SlowAlgorithm))
+                        {
                             enemy.Attack(x, y, players, new AdapterMeleeAttack(new AttackMelee()), out dir);
-                        } else if (enemy.GetAlgorithm().GetType() == typeof(NormalAlgorithm) || enemy.GetAlgorithm().GetType() == typeof(FastAlgorithm)) {
+                        }
+                        else if (enemy.GetAlgorithm().GetType() == typeof(NormalAlgorithm) || enemy.GetAlgorithm().GetType() == typeof(FastAlgorithm))
+                        {
                             if (enemy.Attack(x, y, players, new AdapterRangeAttack(new AttackRange()), out dir))
                             {
-                                int shotX=0, shotY=0;
+                                int shotX = 0, shotY = 0;
                                 switch (dir)
                                 {
                                     case "Up":
@@ -458,11 +465,15 @@ namespace Server
                                     shotY > Map.GetInstance().Objects[shotX].Length - 1)
                                 {
                                     return;
-                                } else {
+                                }
+                                else
+                                {
                                     Map.GetInstance().Objects[shotX][shotY] = new EnemyAttackFire(dir, Map.GetInstance().Objects[shotX][shotY].X, Map.GetInstance().Objects[shotX][shotY].Y, GenerateGameObjectId(TYPE_ENEMY_SHOT));
                                 }
                             }
-                        } else {
+                        }
+                        else
+                        {
                             return;
                         }
                         return;
@@ -538,7 +549,10 @@ namespace Server
             }
             // Move player to the new location
             Map.GetInstance().Objects[newX][newY] = new MapObject(Map.GetInstance().Objects[newX][newY].X, Map.GetInstance().Objects[newX][newY].Y, Map.GetInstance().Objects[x][y].Id, true);
-
+            player.Caretaker.Save();
+            player.X = newX;
+            player.Y = newY;
+            //set player.X,Y to newX, newY
             // Remove old player location and make it an empty space (ID 0 by default)
             Map.GetInstance().Objects[x][y] = new MapObject(Map.GetInstance().Objects[x][y].X, Map.GetInstance().Objects[x][y].Y);
         }
