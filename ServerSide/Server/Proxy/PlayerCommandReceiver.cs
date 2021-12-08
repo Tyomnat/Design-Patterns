@@ -8,7 +8,7 @@ namespace Server.Proxy
 {
     class PlayerCommandReceiver : CommandReceiver
     {
-        public void ExecuteAction(string message, PlayerController playerController, Player player)
+        public void ExecuteAction(string message, PlayerController playerController, Player player, Game game)
         {
             if (message == "Undo")
             {
@@ -17,6 +17,10 @@ namespace Server.Proxy
             else if (message == "memento")
             {
                 player.Caretaker.Restore(4);
+            }
+            else if (message == "game_pause_changed")
+            {
+                game.isPaused = !game.isPaused;
             }
             else
             {

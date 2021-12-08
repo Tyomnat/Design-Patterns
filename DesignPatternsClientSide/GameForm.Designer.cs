@@ -33,6 +33,8 @@ namespace DesignPatternsClientSide
             this.tmrMoving = new System.Windows.Forms.Timer(this.components);
             this.lives = new System.Windows.Forms.Label();
             this.gameOver = new System.Windows.Forms.Label();
+            this.Win = new System.Windows.Forms.Label();
+            this.pausedLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // tmrMoving
@@ -64,11 +66,41 @@ namespace DesignPatternsClientSide
             this.gameOver.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.gameOver.Visible = false;
             // 
+            // Win
+            // 
+            this.Win.BackColor = System.Drawing.Color.Transparent;
+            this.Win.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Win.Font = new System.Drawing.Font("Segoe UI", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Win.ForeColor = System.Drawing.Color.MediumSeaGreen;
+            this.Win.Location = new System.Drawing.Point(0, 0);
+            this.Win.Name = "Win";
+            this.Win.Size = new System.Drawing.Size(474, 402);
+            this.Win.TabIndex = 2;
+            this.Win.Text = "YOU WIN";
+            this.Win.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Win.Visible = false;
+            // 
+            // pausedLabel
+            // 
+            this.pausedLabel.BackColor = System.Drawing.Color.Transparent;
+            this.pausedLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pausedLabel.Font = new System.Drawing.Font("Segoe UI", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.pausedLabel.ForeColor = System.Drawing.Color.Orange;
+            this.pausedLabel.Location = new System.Drawing.Point(0, 0);
+            this.pausedLabel.Name = "pausedLabel";
+            this.pausedLabel.Size = new System.Drawing.Size(474, 402);
+            this.pausedLabel.TabIndex = 3;
+            this.pausedLabel.Text = "PAUSED";
+            this.pausedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.pausedLabel.Visible = false;
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(474, 402);
+            this.Controls.Add(this.pausedLabel);
+            this.Controls.Add(this.Win);
             this.Controls.Add(this.gameOver);
             this.Controls.Add(this.lives);
             this.Name = "GameForm";
@@ -85,6 +117,8 @@ namespace DesignPatternsClientSide
         private System.Windows.Forms.Timer tmrMoving;
         private System.Windows.Forms.Label lives;
         private System.Windows.Forms.Label gameOver;
+        private System.Windows.Forms.Label Win;
+        private System.Windows.Forms.Label pausedLabel;
     }
 }
 

@@ -10,7 +10,7 @@ namespace Server
         public int Id { get; set; }
         private string username;
         private bool isAlive;
-        private int lives = 3;
+        public int lives = 3;
         public String color;
         private Socket socket;
         public int X { get; set; }
@@ -85,13 +85,13 @@ namespace Server
             this.socket.Send(bytes);
         }
 
-        public void ReceiveMessage(CommandReceiver commandReceiver, PlayerController playerController)
+        public void ReceiveMessage(CommandReceiver commandReceiver, PlayerController playerController, Game game)
         {
 
             byte[] responseBuffer = new byte[1024];
             this.socket.Receive(responseBuffer);
             //return Encoding.ASCII.GetString(responseBuffer).Split("\0")[0];
-            commandReceiver.ExecuteAction(Encoding.ASCII.GetString(responseBuffer).Split("\0")[0], playerController, this);
+            commandReceiver.ExecuteAction(Encoding.ASCII.GetString(responseBuffer).Split("\0")[0], playerController, this, game);
         }
 
         public void Update(Event gameEvent)
@@ -107,6 +107,14 @@ namespace Server
             if (gameEvent.Type == "scores_updated")
             {
                 SendMessage("scores_" + gameEvent.Data);
+            }
+            if (gameEvent.Type == "game_ended")
+            {
+                SendMessage("game_ended" + gameEvent.Data);
+            }
+            if (gameEvent.Type == "draw_paused")
+            {
+                SendMessage("draw_paused" + gameEvent.Data);
             }
         }
 

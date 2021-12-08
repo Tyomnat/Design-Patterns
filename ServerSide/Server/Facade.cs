@@ -3,6 +3,7 @@ using Server.Enemies;
 using Server.PointItems;
 using Server.Powerups;
 using Server.Proxy;
+using Server.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,20 +37,19 @@ namespace Server
         private static Subject Subject = new Subject();
         private static CommandProxy Proxy = new CommandProxy(new PlayerCommandReceiver());
 
-
         public void GenerateAllEnemies()
         {
-            //for (int i = 0; i < 1; i++)
-            //{
-            //    Thread thread = new Thread(() =>
-            //    {
-            //        Enemy enemy = new NormalEnemy(GenerateGameObjectId(TYPE_ENEMY_NORMAL), Map.GetInstance());
-            //        enemy.SetAlgorithm(new NormalAlgorithm());
-            //        AddToEnemyListThreadSafe(enemy);
-            //    });
-            //    thread.Start();
+            for (int i = 0; i < 1; i++)
+            {
+                Thread thread = new Thread(() =>
+                {
+                    Enemy enemy = new NormalEnemy(GenerateGameObjectId(TYPE_ENEMY_NORMAL), Map.GetInstance());
+                    enemy.SetAlgorithm(new NormalAlgorithm());
+                    AddToEnemyListThreadSafe(enemy);
+                });
+                thread.Start();
 
-            //}
+            }
 
             //Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_SLOW), Map.GetInstance());
             //enemy.SetAlgorithm(new SlowAlgorithm());
@@ -103,19 +103,22 @@ namespace Server
             while (players.Count != 2)
             {
             }
+
         }
 
-        public void StartGame()
+        public void StartGame(Game game)
         {
             foreach (var pl in players)
             {
-                Thread thread = new Thread(() => PlayerCommunication(pl));
+                Thread thread = new Thread(() => PlayerCommunication(pl, game));
                 thread.Start();
             }
+            game.PlayerCount = players.Count;
 
             // Start main Game thread which handles Map updates (all future game events as well probably)
-            Thread mainThread = new Thread(() => SendMapUpdate());
+            Thread mainThread = new Thread(() => SendMapUpdate(game));
             mainThread.Start();
+            game.state.Handle();
         }
 
         /// <summary>
@@ -144,19 +147,17 @@ namespace Server
         /// <summary>
         /// Main Game Threaded function
         /// </summary>
-        private static void SendMapUpdate()
+        private static void SendMapUpdate(Game game)
         {
+            bool paused = false;
+            Random r = new Random();
             // Kill while in the future on game end condition
-            while (true)
+            while (game.state.GetType().Name != typeof(GameEndState).Name)
             {
-                //byte[] messageBuffer = new byte[1024];
-                //player.GetSocket().Receive(messageBuffer);
-                //string message = Encoding.ASCII.GetString(messageBuffer);
-                //Console.WriteLine(player.GetUsername() + "_" + message);
-                //Event gameEvent = new Event("player_moved", "sdsd");
-                //Subject.Update(gameEvent);
-                //Console.WriteLine(JsonSerializer.Serialize(map.Objects));
-                //Console.ReadLine();
+
+                game.MaxScore = PlayerScores.Max(s => s.Score);
+                game.state.Handle();
+                game.PlayerCount = players.Where(p => p.lives > 0).Count();
 
                 // Server timer forcing movement updates every 200ms
                 var t = Task.Factory.StartNew(() =>
@@ -166,18 +167,37 @@ namespace Server
                 t.Wait();
 
                 //Function to run update to all map elements
-                UpdateMap();
-                var taskMapUpdate = Task.Factory.StartNew(() =>
+                if (game.state.GetType().Name != typeof(PausedState).Name)
                 {
-                    Event gameEvent = new Event("map_updated", JsonConvert.SerializeObject(Map.GetInstance()));
-                    Subject.Update(gameEvent);
-                });
-                taskMapUpdate.Wait();
 
-                Event playerScoresUpdatedEvent = new Event("scores_updated", JsonConvert.SerializeObject(PlayerScores));
-                Subject.Update(playerScoresUpdatedEvent);
+                    if (r.Next(1, 40) == 8)
+                    {
+                        (new Facade()).GenerateItems();
+                    }
+                    if (paused)
+                    {
+                        paused = false;
+                        Subject.Update(new Event("draw_paused", ""));
+                    }
+                    UpdateMap();
+                    var taskMapUpdate = Task.Factory.StartNew(() =>
+                    {
+                        Event gameEvent = new Event("map_updated", JsonConvert.SerializeObject(Map.GetInstance()));
+                        Subject.Update(gameEvent);
+                    });
+                    taskMapUpdate.Wait();
 
+                    Event playerScoresUpdatedEvent = new Event("scores_updated", JsonConvert.SerializeObject(PlayerScores));
+                    Subject.Update(playerScoresUpdatedEvent);
+                }
+                else if (!paused)
+                {
+                    paused = true;
+                    Subject.Update(new Event("draw_paused", ""));
+                }
             }
+            game.winnerId = PlayerScores.OrderByDescending(i => i.Score).First().PlayerId;
+            Subject.Update(new Event("game_ended", game.winnerId.ToString()));
         }
 
 
@@ -200,11 +220,15 @@ namespace Server
                 });
                 thread.Start(rnd);
             }
+
+        }
+
+        public void GeneratePowerups()
+        {
             new Rocket(Map.GetInstance());
             new Shield(Map.GetInstance());
             new SpeedBoost(Map.GetInstance());
         }
-
 
         public void SetPointItemValues(int randInt, PointItem pi)
         {
@@ -295,7 +319,7 @@ namespace Server
 
 
 
-        public void PlayerCommunication(Player player)
+        public void PlayerCommunication(Player player, Game game)
         {
             if (player.GetSocket().Connected)
             {
@@ -306,7 +330,7 @@ namespace Server
             while (player.GetSocket().Connected)
             {
                 // Receive updated movement direction if any
-                player.ReceiveMessage(Proxy, playerController);//execute action       
+                player.ReceiveMessage(Proxy, playerController, game);//execute action       
             }
         }
 

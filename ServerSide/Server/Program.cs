@@ -9,6 +9,7 @@ using System.Text.Json;
 using Newtonsoft.Json;
 using Server.PointItems;
 using Server.Powerups;
+using Server.State;
 
 namespace Server
 {
@@ -26,17 +27,22 @@ namespace Server
         /// </summary>
         private static void StartServer()
         {
-
+            Game Game = new Game();
             facade.GenerateAllEnemies();
             facade.GenerateItems();
+            facade.GeneratePowerups();
             facade.AwaitPlayerConnections();
-            facade.StartGame();
+            facade.StartGame(Game);
+
 
             // Infinite loop for program not to shut down, eventually will have to be replaced
             // with game end condition
-            while (!false)
+            while (Game.state.GetType().Name != typeof(GameEndState).Name)
             {
             }
+            //facade.InvokeObserver(new Event("game_ended", Game.winnerId.ToString()));
+            Game.state.Handle();
+
         }
     }
 }
