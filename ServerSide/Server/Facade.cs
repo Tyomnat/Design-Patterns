@@ -2,6 +2,7 @@
 using Server.Enemies;
 using Server.PointItems;
 using Server.Powerups;
+using Server.Proxy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,7 @@ namespace Server
         private static List<Player> players = new List<Player>();
         private static List<PlayerScore> PlayerScores = new List<PlayerScore>();
         private static Subject Subject = new Subject();
+        private static CommandProxy Proxy = new CommandProxy(new PlayerCommandReceiver());
 
 
         public void GenerateAllEnemies()
@@ -304,20 +306,7 @@ namespace Server
             while (player.GetSocket().Connected)
             {
                 // Receive updated movement direction if any
-                string message = player.ReceiveMessage();
-                if (message == "Undo")
-                {
-                    playerController.Undo();
-                }
-                else if (message == "memento")
-                {
-                    player.Caretaker.Restore(4);
-                }
-                else
-                {
-                    ICommand command = CommandFactory.GetCommand(message, player);
-                    playerController.Run(command);
-                }
+                player.ReceiveMessage(Proxy, playerController);//execute action       
             }
         }
 

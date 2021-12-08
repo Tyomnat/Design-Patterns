@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Server.Proxy;
+using System;
 using System.Net.Sockets;
 using System.Text;
 
@@ -84,11 +85,13 @@ namespace Server
             this.socket.Send(bytes);
         }
 
-        public string ReceiveMessage()
+        public void ReceiveMessage(CommandReceiver commandReceiver, PlayerController playerController)
         {
+
             byte[] responseBuffer = new byte[1024];
             this.socket.Receive(responseBuffer);
-            return Encoding.ASCII.GetString(responseBuffer).Split("\0")[0];
+            //return Encoding.ASCII.GetString(responseBuffer).Split("\0")[0];
+            commandReceiver.ExecuteAction(Encoding.ASCII.GetString(responseBuffer).Split("\0")[0], playerController, this);
         }
 
         public void Update(Event gameEvent)
