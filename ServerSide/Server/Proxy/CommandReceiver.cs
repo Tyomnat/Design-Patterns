@@ -8,6 +8,6 @@ namespace Server.Proxy
 {
     interface CommandReceiver
     {
-        public void ExecuteAction(string message, PlayerController playerController, Player player);
+        public void ExecuteAction(string message, PlayerController playerController, Player player, Game game);
     }
 }

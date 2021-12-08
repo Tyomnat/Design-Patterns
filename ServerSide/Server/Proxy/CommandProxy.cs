@@ -16,7 +16,8 @@ namespace Server.Proxy
             "Up",
             "Down",
             "Undo",
-            "memento"
+            "memento",
+            "game_pause_changed"
         });
 
         private PlayerCommandReceiver PlayerCommandReceiver;
@@ -25,11 +26,11 @@ namespace Server.Proxy
             PlayerCommandReceiver = playerCommandReceiver;
         }
 
-        public void ExecuteAction(string message, PlayerController playerController, Player player)
+        public void ExecuteAction(string message, PlayerController playerController, Player player, Game game)
         {
             if (this.IsMessageValid(message))
             {
-                PlayerCommandReceiver.ExecuteAction(message, playerController, player);
+                PlayerCommandReceiver.ExecuteAction(message, playerController, player, game);
             }
         }
 

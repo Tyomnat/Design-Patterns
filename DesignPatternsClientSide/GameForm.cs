@@ -24,6 +24,12 @@ namespace DesignPatternsClientSide
         private static Player player = new Player();
         private static Map Map;
         private static List<PlayerScore> PlayerScores = new List<PlayerScore>();
+        private static bool dead = false;
+        private static bool win = false;
+        private static bool drawPaused = false;
+        private static int winnerId = -1;
+
+
 
         public GameForm(Socket socket)
         {
@@ -114,6 +120,19 @@ namespace DesignPatternsClientSide
                         string newHP = message.Split("takeDamage_")[1];
                         player.Lives = int.Parse(newHP);
                     }
+                    else if (message.Contains("game_ended"))
+                    {
+                        if (!dead)
+                        {
+                            string parsedId = message.Split("game_ended")[1];
+                            winnerId = int.Parse(parsedId);
+                            win = true;
+                        }
+                    }
+                    else if (message.Contains("draw_paused"))
+                    {
+                        drawPaused = !drawPaused;
+                    }
                 }
 
             }
@@ -162,7 +181,18 @@ namespace DesignPatternsClientSide
             {
                 lives.Visible = false;
                 gameOver.Visible = true;
+                dead = true;
             }
+            if (win && player.Id == winnerId)
+            {
+                Win.Visible = true;
+            }
+            else if (win)
+            {
+                gameOver.Visible = true;
+            }
+            pausedLabel.Visible = drawPaused;
+
             // If we have the map
             if (Map != null)
             {
@@ -288,6 +318,10 @@ namespace DesignPatternsClientSide
             else if (e.KeyCode == Keys.M)
             {
                 SendMessage("memento");
+            }
+            else if (e.KeyCode == Keys.P)
+            {
+                SendMessage("game_pause_changed");
             }
         }
 
