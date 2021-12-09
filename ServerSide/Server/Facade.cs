@@ -51,9 +51,9 @@ namespace Server
 
             }
 
-            //Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_SLOW), Map.GetInstance());
-            //enemy.SetAlgorithm(new SlowAlgorithm());
-            //AddToEnemyListThreadSafe(enemy);
+            Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_SLOW), Map.GetInstance());
+            enemy.SetAlgorithm(new SlowAlgorithm());
+            AddToEnemyListThreadSafe(enemy);
 
             //for (int i = 0; i < 2; i++)
             //{
@@ -67,26 +67,26 @@ namespace Server
             //    });
             //    thread.Start(enemy);
             //}
-            //for (int i = 0; i < 1; i++)
-            //{
-            //    Thread thread = new Thread(() =>
-            //    {
-            //        Enemy enemy = new FastEnemy(GenerateGameObjectId(TYPE_ENEMY_FAST), Map.GetInstance());
-            //        enemy.SetAlgorithm(new FastAlgorithm());
-            //        AddToEnemyListThreadSafe(enemy);
-            //    });
-            //    thread.Start();
-            //}
-            //for (int i = 0; i < 1; i++)
-            //{
-            //    Thread thread = new Thread(() =>
-            //    {
-            //        Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_GHOST), Map.GetInstance());
-            //        enemy.SetAlgorithm(new GhostAlgorithm());
-            //        AddToEnemyListThreadSafe(enemy);
-            //    });
-            //    thread.Start();
-            //}
+            for (int i = 0; i < 1; i++)
+            {
+                Thread thread = new Thread(() =>
+                {
+                    Enemy enemy = new FastEnemy(GenerateGameObjectId(TYPE_ENEMY_FAST), Map.GetInstance());
+                    enemy.SetAlgorithm(new FastAlgorithm());
+                    AddToEnemyListThreadSafe(enemy);
+                });
+                thread.Start();
+            }
+            for (int i = 0; i < 1; i++)
+            {
+                Thread thread = new Thread(() =>
+                {
+                    Enemy enemy = new SlowEnemy(GenerateGameObjectId(TYPE_ENEMY_GHOST), Map.GetInstance());
+                    enemy.SetAlgorithm(new GhostAlgorithm());
+                    AddToEnemyListThreadSafe(enemy);
+                });
+                thread.Start();
+            }
         }
 
         public void AwaitPlayerConnections()
