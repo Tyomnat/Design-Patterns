@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class PlayerController
+    public class PlayerController
     {
         private List<ICommand> Commands = new List<ICommand>();
 

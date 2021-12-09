@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Server
 {
-    class Player : IObserver, IOriginator<Player>
+    public class Player : IObserver, IOriginator<Player>
     {
         public int Id { get; set; }
-        private string username;
+        public string username;
         private bool isAlive;
         public int lives = 3;
         public String color;
@@ -85,13 +85,13 @@ namespace Server
             this.socket.Send(bytes);
         }
 
-        public void ReceiveMessage(CommandReceiver commandReceiver, PlayerController playerController, Game game)
+        public void ReceiveMessage(CommandReceiver commandReceiver, PlayerController playerController, Game game, Subject subject)
         {
 
             byte[] responseBuffer = new byte[1024];
             this.socket.Receive(responseBuffer);
             //return Encoding.ASCII.GetString(responseBuffer).Split("\0")[0];
-            commandReceiver.ExecuteAction(Encoding.ASCII.GetString(responseBuffer).Split("\0")[0], playerController, this, game);
+            commandReceiver.ExecuteAction(Encoding.ASCII.GetString(responseBuffer).Split("\0")[0], playerController, this, game, subject);
         }
 
         public void Update(Event gameEvent)
@@ -115,6 +115,10 @@ namespace Server
             if (gameEvent.Type == "draw_paused")
             {
                 SendMessage("draw_paused" + gameEvent.Data);
+            }
+            if (gameEvent.Type == "new_message")
+            {
+                SendMessage("new_message" + gameEvent.Data);
             }
         }
 

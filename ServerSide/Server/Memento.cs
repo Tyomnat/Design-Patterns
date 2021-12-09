@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Memento<T>
+    public class Memento<T>
     {
         public T State { get; set; }
 

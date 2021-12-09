@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    abstract class ICommand
+    public abstract class ICommand
     {
         protected Player Player;
 

@@ -28,6 +28,8 @@ namespace DesignPatternsClientSide
         private static bool win = false;
         private static bool drawPaused = false;
         private static int winnerId = -1;
+        private static List<string> chatContent = new List<string>();
+        private static string currentMsg = "";
 
 
 
@@ -36,7 +38,7 @@ namespace DesignPatternsClientSide
             this.socket = socket;
             InitializeComponent(); // Default form initialization method
             //this.Size = new Size();
-            this.ClientSize = new Size(544, 544);
+            this.ClientSize = new Size(544, 684);
             DoubleBuffered = true; // Making form not flicker due to rapid repainting
             StartCommunication(); // Start communication thread
         }
@@ -107,6 +109,7 @@ namespace DesignPatternsClientSide
                     else if (message.Contains("id"))
                     {
                         player.Id = int.Parse(message.Split(":")[1]);
+                        player.Username = message.Split(":")[3];
                         player.Lives = 3;
 
                     }
@@ -132,6 +135,17 @@ namespace DesignPatternsClientSide
                     else if (message.Contains("draw_paused"))
                     {
                         drawPaused = !drawPaused;
+                    }
+                    else if (message.Contains("new_message"))
+                    {
+                        string parsed = message.Split("new_message")[1];
+                        currentMsg = handleChat(parsed);
+
+                    }
+                    else if (message.Contains("username_updated"))
+                    {
+                        string parsed = message.Split("username_updated")[1];
+                        player.Username = parsed;
                     }
                 }
 
@@ -175,6 +189,11 @@ namespace DesignPatternsClientSide
         /// <param name="e"></param>
         private void GameForm_Paint(object sender, PaintEventArgs e)
         {
+            if (currentMsg != "")
+            {
+                chatArea.Text = currentMsg;
+                currentMsg = "";
+            }
             if (player.Lives > 0)
                 lives.Text = "Lives: " + player.Lives.ToString();
             else
@@ -323,6 +342,11 @@ namespace DesignPatternsClientSide
             {
                 SendMessage("game_pause_changed");
             }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                chatInput.Enabled = true;
+                chatInput.Focus();
+            }
         }
 
         /// <summary>
@@ -353,6 +377,41 @@ namespace DesignPatternsClientSide
         {
             byte[] commandBuffer = Encoding.ASCII.GetBytes(message);
             this.socket.Send(commandBuffer);
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chatInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                //chatArea.Text += chatInput.Text + "\n";
+
+
+                //chatArea.Text = handleChat(chatInput.Text);
+                SendMessage("chat_" + player.Username + ": " + chatInput.Text);
+                chatInput.Text = "";
+                chatInput.Enabled = false;
+            }
+        }
+
+        private static string handleChat(string newMsg)
+        {
+            chatContent.Add(newMsg);
+            if (chatContent.Count > 5)
+            {
+                chatContent.RemoveAt(0);
+            }
+
+            string content = "";
+            foreach (var item in chatContent)
+            {
+                content += item + "\n";
+            }
+            return content;
         }
     }
 }

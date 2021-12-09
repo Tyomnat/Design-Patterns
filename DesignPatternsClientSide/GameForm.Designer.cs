@@ -35,6 +35,8 @@ namespace DesignPatternsClientSide
             this.gameOver = new System.Windows.Forms.Label();
             this.Win = new System.Windows.Forms.Label();
             this.pausedLabel = new System.Windows.Forms.Label();
+            this.chatArea = new System.Windows.Forms.Label();
+            this.chatInput = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // tmrMoving
@@ -60,7 +62,7 @@ namespace DesignPatternsClientSide
             this.gameOver.ForeColor = System.Drawing.Color.Red;
             this.gameOver.Location = new System.Drawing.Point(0, 0);
             this.gameOver.Name = "gameOver";
-            this.gameOver.Size = new System.Drawing.Size(474, 402);
+            this.gameOver.Size = new System.Drawing.Size(544, 684);
             this.gameOver.TabIndex = 1;
             this.gameOver.Text = "GAME OVER";
             this.gameOver.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -74,7 +76,7 @@ namespace DesignPatternsClientSide
             this.Win.ForeColor = System.Drawing.Color.MediumSeaGreen;
             this.Win.Location = new System.Drawing.Point(0, 0);
             this.Win.Name = "Win";
-            this.Win.Size = new System.Drawing.Size(474, 402);
+            this.Win.Size = new System.Drawing.Size(544, 684);
             this.Win.TabIndex = 2;
             this.Win.Text = "YOU WIN";
             this.Win.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -88,17 +90,39 @@ namespace DesignPatternsClientSide
             this.pausedLabel.ForeColor = System.Drawing.Color.Orange;
             this.pausedLabel.Location = new System.Drawing.Point(0, 0);
             this.pausedLabel.Name = "pausedLabel";
-            this.pausedLabel.Size = new System.Drawing.Size(474, 402);
+            this.pausedLabel.Size = new System.Drawing.Size(544, 684);
             this.pausedLabel.TabIndex = 3;
             this.pausedLabel.Text = "PAUSED";
             this.pausedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.pausedLabel.Visible = false;
             // 
+            // chatArea
+            // 
+            this.chatArea.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.chatArea.Location = new System.Drawing.Point(13, 540);
+            this.chatArea.Name = "chatArea";
+            this.chatArea.Size = new System.Drawing.Size(519, 97);
+            this.chatArea.TabIndex = 4;
+            // 
+            // chatInput
+            // 
+            this.chatInput.Enabled = false;
+            this.chatInput.Location = new System.Drawing.Point(12, 649);
+            this.chatInput.Multiline = true;
+            this.chatInput.Name = "chatInput";
+            this.chatInput.Size = new System.Drawing.Size(520, 23);
+            this.chatInput.TabIndex = 5;
+            this.chatInput.TabStop = false;
+            this.chatInput.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.chatInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.chatInput_KeyDown);
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(474, 402);
+            this.ClientSize = new System.Drawing.Size(544, 684);
+            this.Controls.Add(this.chatInput);
+            this.Controls.Add(this.chatArea);
             this.Controls.Add(this.pausedLabel);
             this.Controls.Add(this.Win);
             this.Controls.Add(this.gameOver);
@@ -119,6 +143,8 @@ namespace DesignPatternsClientSide
         private System.Windows.Forms.Label gameOver;
         private System.Windows.Forms.Label Win;
         private System.Windows.Forms.Label pausedLabel;
+        private System.Windows.Forms.Label chatArea;
+        private System.Windows.Forms.TextBox chatInput;
     }
 }
 

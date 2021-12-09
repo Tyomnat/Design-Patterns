@@ -9,7 +9,7 @@ namespace Server
     /// <summary>
     /// Game event class for Observer update actions
     /// </summary>
-    class Event
+    public class Event
     {
         public Event(string type, string data)
         {

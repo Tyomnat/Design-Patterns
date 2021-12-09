@@ -8,6 +8,7 @@ namespace DesignPatternsClientSide
     {
         public int X { get; set; }
         public int Y { get; set; }
+        public string Username;
 
         public int Id { get; set; }
 

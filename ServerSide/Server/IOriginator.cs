@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    interface IOriginator<T>
+    public interface IOriginator<T>
     {
         public Memento<T> CreateMemento();
         public void SetMemento(Memento<T> memento);

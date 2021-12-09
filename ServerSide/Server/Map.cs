@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Map
+    public class Map
     {
         public int Width { get; set; }
         public int Height { get; set; }

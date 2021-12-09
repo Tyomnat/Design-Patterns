@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Caretaker<T>
+    public class Caretaker<T>
     {
         private List<Memento<T>> MementoList = new List<Memento<T>>();
         private IOriginator<T> Originator { get; set; }

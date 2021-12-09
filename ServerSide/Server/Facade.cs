@@ -324,13 +324,13 @@ namespace Server
             if (player.GetSocket().Connected)
             {
                 // Initial player ID send out to store in the client side
-                byte[] bytes = Encoding.ASCII.GetBytes("id:" + player.Id.ToString() + "eventend");
+                byte[] bytes = Encoding.ASCII.GetBytes("id:" + player.Id.ToString() + ":username:" + player.GetUsername() + "eventend");
                 player.GetSocket().Send(bytes);
             }
             while (player.GetSocket().Connected)
             {
                 // Receive updated movement direction if any
-                player.ReceiveMessage(Proxy, playerController, game);//execute action       
+                player.ReceiveMessage(Proxy, playerController, game, Subject);//execute action       
             }
         }
 

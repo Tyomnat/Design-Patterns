@@ -9,7 +9,7 @@ namespace Server
     /// <summary>
     /// Observer Design Pattern Observer Interface
     /// </summary>
-    interface IObserver
+    public interface IObserver
     {
         void Update(Event gameEvent);
     }

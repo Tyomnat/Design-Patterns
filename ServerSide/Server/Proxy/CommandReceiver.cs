@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Server.Proxy
 {
-    interface CommandReceiver
+    public interface CommandReceiver
     {
-        public void ExecuteAction(string message, PlayerController playerController, Player player, Game game);
+        public void ExecuteAction(string message, PlayerController playerController, Player player, Game game, Subject subject);
     }
 }

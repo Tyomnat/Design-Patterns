@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class MapObject
+    public class MapObject
     {
         public int Id { get; set; }
         public int X { get; set; }

@@ -9,7 +9,7 @@ namespace Server
     /// <summary>
     /// Observer Design Patter Subject Class
     /// </summary>
-    class Subject : ISubject
+    public class Subject : ISubject
     {
         private List<IObserver> observers = new List<IObserver>();
 
